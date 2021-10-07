@@ -4,7 +4,10 @@ data "aws_region" "current" {}
 data "aws_availability_zones" "available" {}
 
 data "aws_vpc" "selected" {
-  id = var.vpc_id
+  filter {
+    name   = "tag:Name"
+    values = ["${var.project_name}-vpc-${var.environment}"]
+  }
 }
 
 data "aws_subnet_ids" "all" {
@@ -20,7 +23,15 @@ data "aws_subnet_ids" "private" {
   vpc_id = data.aws_vpc.selected.id
   filter {
     name   = "tag:Name"
-    values = var.private_subnet_tags
+    values = ["${var.project_name}-private-${var.environment}"]
+  }
+}
+
+data "aws_subnet_ids" "public" {
+  vpc_id = data.aws_vpc.selected.id
+  filter {
+    name   = "tag:Name"
+    values = ["${var.project_name}-public-${var.environment}"]
   }
 }
 
@@ -29,31 +40,34 @@ data "aws_subnet" "subnet_private_lists" {
   id       = each.value
 }
 
+data "aws_subnet" "subnet_public_lists" {
+  for_each = data.aws_subnet_ids.public.ids
+  id       = each.value
+}
+
+
 data "aws_iam_policy" "asg_ssm_instance_policy" {
   name = "AmazonSSMManagedInstanceCore"
 }
 
-data "aws_ami" "amazon_linux" {
-  most_recent = true
-  owners      = ["amazon"]
+// data "aws_ami" "amazon_linux" {
+//   most_recent = true
+//   owners      = ["amazon"]
 
-  filter {
-    name = "name"
+//   filter {
+//     name = "name"
 
-    values = [
-      "amzn-ami-hvm-*-x86_64-gp2",
-    ]
-  }
-}
+//     values = var.asg_ami_filter_value
+//   }
+// }
 
 
 locals {
-  region = "us-east-1"
-
-  tags = [
+  s3_logging_bucket_name = "${var.project_name}-${var.application_name}-logging-${var.environment}"
+  asg_tags = [
     {
       key                 = "Name"
-      value               = "${var.project_name}-asg-instance"
+      value               = "${var.project_name}-${var.application_name}-asg-instance-${var.environment}"
       propagate_at_launch = true
     },
     {
@@ -63,8 +77,9 @@ locals {
     },
   ]
 
-  tags_as_map = {
-    Environment = "dev"
+  tags = {
+    Environment = var.environment
+    Project     = var.project_name
   }
 
 }

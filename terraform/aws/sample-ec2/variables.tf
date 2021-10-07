@@ -1,79 +1,67 @@
-variable "vpc_id" {
-  type        = string
+
+variable "aws_region" {
+  type = string
 }
 
 variable "project_name" {
-  type        = string
+  type = string
+}
+
+variable "application_name" {
+  type = string
 }
 
 variable "environment" {
-  type        = string
-}
-
-variable "private_subnet_tags" {
-  type        = string
+  type = string
 }
 
 # elb vars
-variable "elb_healthy_threshold" {
-  type        = number
-  default = 2
+variable "asg_elb_listeners" {
+  type = list(map(string))
 }
 
-variable "elb_unhealthy_threshold" {
-  type        = number
-  default = 2
+variable "asg_elb_health_check" {
+  type = map(string)
 }
 
-variable "elb_timeout" {
-  type        = number
-  default = 3
-}
-
-variable "elb_interval" {
-  type        = number
-  default = 30
-}
-
-variable "elb_health_target" {
-  type        = string
-  default = "TCP:22"
-}
 
 # asg vars
 variable "asg_ssh_key_name" {
-  type        = string
+  type = string
 }
 
 variable "asg_max" {
-  type        = number
+  type    = number
   default = 3
 }
 
 variable "asg_min" {
-  type        = number
+  type    = number
   default = 1
 }
 
 variable "asg_grace" {
-  type        = number
+  type    = number
   default = 300
 }
 
-variable "asg_hct" {
-  type        = string
-  default = "ELB"
+variable "asg_health_check_type" {
+  type = string
 }
 
 variable "asg_instance_type" {
-  type        = string
+  type = string
 }
 
+// variable "asg_ami_filter_value" {
+//   type = list(string)
+// }
+
 variable "asg_ami_id" {
-  type        = string
+  type = string
 }
 
 variable "asg_block_device_mappings" {
-  type        = list(map(string))
+  type = list(any)
 }
 

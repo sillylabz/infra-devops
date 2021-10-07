@@ -27,21 +27,21 @@ module "vpc" {
   private_subnet_tags = merge(
     local.tags,
     {
-      Name = "${var.project_name}-private"
+      Name = "${var.project_name}-private-${var.environment}"
     }
   )
   public_subnets = [var.subnet_cidrs["public1"], var.subnet_cidrs["public2"], var.subnet_cidrs["public3"]]
   public_subnet_tags = merge(
     local.tags,
     {
-      Name = "${var.project_name}-public"
+      Name = "${var.project_name}-public-${var.environment}"
     }
   )
   database_subnets = [var.subnet_cidrs["database1"], var.subnet_cidrs["database2"], var.subnet_cidrs["database3"]]
   database_subnet_tags = merge(
     local.tags,
     {
-      Name = "${var.project_name}-database"
+      Name = "${var.project_name}-database-${var.environment}"
     }
   )
   create_database_subnet_group = false
