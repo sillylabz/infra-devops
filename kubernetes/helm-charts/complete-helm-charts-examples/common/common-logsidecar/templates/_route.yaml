@@ -1,0 +1,28 @@
+{{- define "common-logsidecar.route.tpl" -}}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: {{ .Chart.Name }}
+  name: {{ .Chart.Name }}-direct
+  namespace: {{ .Release.Namespace }}
+spec:
+  host: {{ .Chart.Name }}-{{ .Release.Namespace }}.apps.{{ $.Values.env_settings.DOMAIN_ROOT }}
+  port:
+    targetPort: {{ .Values.logsidecar.port | default 8080 }}-tcp
+  tls:
+    insecureEdgeTerminationPolicy: Allow
+    termination: edge
+  to:
+    kind: Service
+    name: {{ .Chart.Name }}
+    weight: 100
+  wildcardPolicy: None
+status:
+    ingress:
+    - routerName: router
+
+{{- end -}}
+{{- define "common-logsidecar.route" -}}
+{{- include "common-logsidecar.util.merge" (append . "common-logsidecar.route.tpl") -}}
+{{- end -}}

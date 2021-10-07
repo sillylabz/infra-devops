@@ -1,0 +1,48 @@
+global:
+  imageRegistry: quay.apps.ent-ocp-prod-useast1.aws.internal.das
+  # imagePullSecrets:
+  #   - brokerpullsecret
+  redis: {}
+
+image:
+  repository: broker_portal/redis
+  tag: 5.0.7-debian-10-r32
+# nameOverride: redis-sentinel
+# fullnameOverride: redis
+fullnameOverride: redis-sentinel
+
+cluster:
+  slaveCount: 3
+
+sentinel:
+  enabled: true
+  usePassword: false
+  image:
+    repository: broker_portal/redis-sentinel
+    tag: 5.0.7-debian-10-r27
+  masterSet: redis-cluster
+
+networkPolicy:
+  enabled: true
+
+securityContext:
+  runAsUser: "1000180001"
+
+password: wellpoint
+
+master:
+  statefulset:
+    updateStrategy: RollingUpdate
+
+slave:
+  statefulset:
+    updateStrategy: RollingUpdate
+
+configmap: |-
+  # Enable AOF https://redis.io/topics/persistence#append-only-file
+  appendonly yes
+  # Disable RDB persistence, AOF persistence already enabled.
+  save ""
+
+podSecurityPolicy:
+  create: false

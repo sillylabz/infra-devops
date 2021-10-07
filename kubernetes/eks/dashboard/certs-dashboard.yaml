@@ -1,0 +1,41 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-stg
+  namespace: cert-manager
+spec:
+  acme:
+    # The ACME server URL
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    # Email address used for ACME registration
+    email: user@mail.com
+    # Name of a secret used to store the ACME account private key
+    privateKeySecretRef:
+      name: letsencrypt-stg
+    # Enable the HTTP-01 challenge provider
+    solvers:
+       - http01:
+           ingress:
+             class:  nginx
+
+# ---
+# apiVersion: cert-manager.io/v1
+# kind: Certificate
+# metadata:
+#   name: kubernetes-dashboard-stg
+#   namespace: cert-manager
+# spec:
+#   secretName: certificate-stg-dashboard
+#   dnsNames:
+#   - kube-dashboard.kubeclusterdev.com
+#   acme:
+#     config:
+#     - http01:
+#         ingressClass: nginx
+#       domains:
+#       - kube-dashboard.kubeclusterdev.com
+#   issuerRef:
+#     name: letsencrypt-stg
+#     # We can reference ClusterIssuers by changing the kind here.
+#     # The default value is Issuer (i.e. a locally namespaced Issuer)
+#     kind: ClusterIssuer

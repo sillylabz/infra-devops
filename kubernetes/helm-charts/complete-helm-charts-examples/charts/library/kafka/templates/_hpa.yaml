@@ -1,0 +1,27 @@
+{{- define "library-kafka.hpa.tpl" -}}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: {{ .Release.Name }}
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  maxReplicas: {{ include "library-kafka.util.resolve" (dict "key" "maxReplicas" "context" $) | default 5 }}
+  metrics:
+  - resource:
+      name: cpu
+      targetAverageUtilization: {{ include "library-kafka.util.resolve" (dict "key" "cpuTargetAverageUtilization" "context" $) | default "80" }}
+    type: Resource
+  - resource:
+      name: memory
+      targetAverageUtilization: {{ include "library-kafka.util.resolve" (dict "key" "memoryTargetAverageUtilization" "context" $) | default "75" }}
+    type: Resource
+  minReplicas: {{ include "library-kafka.util.resolve" (dict "key" "minReplicas" "context" $) }}
+  scaleTargetRef:
+    kind: DeploymentConfig
+    name: {{ .Release.Name }}
+{{- end -}}
+{{- define "library-kafka.hpa" -}}
+{{- include "library-kafka.util.merge" (append . "library-kafka.hpa.tpl") -}}
+{{- end -}}

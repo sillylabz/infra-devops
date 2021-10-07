@@ -1,0 +1,28 @@
+{{- define "library-python.hpa.tpl" -}}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: {{ .Release.Name }}
+    repo: broker-helm-charts
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  maxReplicas: {{ include "library-python.util.resolve" (dict "key" "maxReplicas" "context" $) | default 5 }}
+  metrics:
+  - resource:
+      name: cpu
+      targetAverageUtilization: {{ include "library-python.util.resolve" (dict "key" "cpuTargetAverageUtilization" "context" $) | default "80" }}
+    type: Resource
+  - resource:
+      name: memory
+      targetAverageUtilization: {{ include "library-python.util.resolve" (dict "key" "memoryTargetAverageUtilization" "context" $) | default "75" }}
+    type: Resource
+  minReplicas: {{ include "library-python.util.resolve" (dict "key" "minReplicas" "context" $) }}
+  scaleTargetRef:
+    kind: DeploymentConfig
+    name: {{ .Release.Name }}
+{{- end -}}
+{{- define "library-python.hpa" -}}
+{{- include "library-python.util.merge" (append . "library-python.hpa.tpl") -}}
+{{- end -}}

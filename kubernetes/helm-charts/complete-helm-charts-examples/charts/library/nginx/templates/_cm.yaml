@@ -1,0 +1,34 @@
+{{- define "library-nginx.cm.tpl" }}
+apiVersion: v1
+kind: List
+items:
+- apiVersion: v1
+  data:
+  {{ range $path, $_ :=  .Files.Glob  "config/nginx/**" }}
+    {{$path | base}}: |
+{{ $.Files.Get $path | indent 6 }}
+  {{ end }}
+  kind: ConfigMap
+  metadata:
+    labels:
+      app: {{ .Release.Name }}
+      repo: broker-helm-charts
+    name: nginx
+    namespace: {{ .Release.Namespace }}
+- apiVersion: v1
+  data:
+  {{ range $path, $_ :=  .Files.Glob  "config/nginx-rsyslog-client/**" }}
+    {{$path | base}}: |
+{{ $.Files.Get $path | indent 6 }}
+  {{ end }}
+  kind: ConfigMap
+  metadata:
+    labels:
+      app: {{ .Release.Name }}
+      repo: broker-helm-charts
+    name: nginx-rsyslog-client
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+{{- define "library-nginx.cm" }}
+{{- include "library-nginx.util.merge" (append . "library-nginx.cm.tpl") }}
+{{- end }}

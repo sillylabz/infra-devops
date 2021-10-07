@@ -1,0 +1,3 @@
+{{- include "library-kafka.hpa" (list . "{{ Release.Name }}.hpa") -}}
+{{- define "{{ Release.Name }}.hpa" -}}
+{{- end -}}

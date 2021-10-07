@@ -1,0 +1,14 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: dynamic-sc
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+  # need to set encrypted to "true" so eks can dynamically provision 
+  # pvs when a pvc is requested.
+  encrypted: "true"
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Delete
+allowVolumeExpansion: true
+

@@ -1,0 +1,31 @@
+# environment global
+appHost: brokerportal-devocp.anthem.com
+configServer: http://va10dlvpos316.wellpoint.com:9000/config-server/
+domainRoot: ent-ocp-np1-useast1.aws.internal.das
+environment: dev
+indexName: brokerportal_dev
+masterUrl: https://master.ent-ocp-np1-useast1.aws.internal.das/console/project/broker-portal-devocp
+oidcClient: 0007caa9-53ed-1cdc-ace0-a3911e870000
+oidcClientSecret: 4h1He1qXtf9LKBCSIEy1eCd4gK5gOe53FjLhIOvBIN8=
+oidcHmacKey: brokernp1
+oidcHost: secure-gateway.dev.va.anthem.com
+registryHost: quay.apps.ent-ocp-np2-useast1.aws.internal.das
+splunkClientName: np1-broker-portaldevocp-splunk-forwarder
+splunkHost: va10n40401.wellpoint.com:9997,va10n40402.wellpoint.com:9997
+splunkIndexName: brokerportal_dev
+splunkPassword: testtest
+splunkStartArgs: --accept-license
+
+# environment by type
+graphql:
+  activeProfiles: DEVCLOUD
+java:
+  activeProfiles: dev,openshift
+kafka:
+  activeProfiles: dev,openshift
+nodejs:
+  activeProfiles: DEVCLOUD
+python:
+  activeProfiles: devcloud
+
+# environment by service

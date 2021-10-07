@@ -1,0 +1,16 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: polling-app-ingress
+  namespace: polling-app
+spec:
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - path: /polling
+        backend:
+          serviceName: polling-app-client
+          servicePort: 80
+

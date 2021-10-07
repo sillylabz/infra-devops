@@ -1,0 +1,53 @@
+# Default values for demo-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+namespaces:
+  - name: "test-servers"
+
+test_servers:
+  - name: "saltmaster"
+    image: "saltstack/salt"
+    # image_tag: "20.04"
+    memory_request: "128Mi"
+    cpu_request: "250m"
+    memory_limit: "512Mi"
+    cpu_limit: "500m"
+    replicaCount: 1
+    image_pull_policy: Always
+
+  - name: "centostest1"
+    image: "centos"
+    image_tag: "centos8"
+    memory_request: "128Mi"
+    cpu_request: "250m"
+    memory_limit: "512Mi"
+    cpu_limit: "500m"
+    replicaCount: 1
+    image_pull_policy: Always
+
+  - name: "centostest2"
+    image: "centos"
+    image_tag: "centos8"
+    memory_request: "128Mi"
+    cpu_request: "250m"
+    memory_limit: "512Mi"
+    cpu_limit: "500m"
+    replicaCount: 1
+    image_pull_policy: Always
+
+  - name: "ubuntutest1"
+    image: "ubuntu"
+    image_tag: "20.10"
+    memory_request: "128Mi"
+    cpu_request: "250m"
+    memory_limit: "512Mi"
+    cpu_limit: "500m"
+    replicaCount: 1
+    image_pull_policy: Always
+
+
+
+
+
+

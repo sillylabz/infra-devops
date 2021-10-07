@@ -1,0 +1,23 @@
+{{- define "common-logsidecar.service.tpl" -}}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Chart.Name }}
+  name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - name: {{ .Values.logsidecar.port | default 8080 }}-tcp
+    port: {{ .Values.logsidecar.port | default 8080 }}
+    protocol: TCP
+    targetPort: {{ .Values.logsidecar.targetPort | default 8080 }}
+  selector:
+    app: {{ .Chart.Name }}
+    deploymentconfig: {{ .Chart.Name }}
+  sessionAffinity: None
+  type: ClusterIP
+{{- end -}}
+{{- define "common-logsidecar.service" -}}
+{{- include "common-logsidecar.util.merge" (append . "common-logsidecar.service.tpl") -}}
+{{- end -}}

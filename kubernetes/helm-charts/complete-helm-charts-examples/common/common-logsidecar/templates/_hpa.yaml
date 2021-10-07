@@ -1,0 +1,27 @@
+{{- define "common-logsidecar.hpa.tpl" -}}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: {{ .Chart.Name }}
+  name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  maxReplicas: 5
+  metrics:
+  - resource:
+      name: cpu
+      targetAverageUtilization: 90
+    type: Resource
+  - resource:
+      name: memory
+      targetAverageUtilization: 75
+    type: Resource
+  minReplicas: 2
+  scaleTargetRef:
+    kind: DeploymentConfig
+    name: {{ .Chart.Name }}
+{{- end -}}
+{{- define "common-logsidecar.hpa" -}}
+{{- include "common-logsidecar.util.merge" (append . "common-logsidecar.hpa.tpl") -}}
+{{- end -}}

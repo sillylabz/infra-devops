@@ -1,0 +1,135 @@
+environments:
+  default:
+  dev:
+  qa:
+  uat:
+  prod:
+  dr:
+  blue:
+
+helmDefaults:
+  recreatePods: true
+  historyMax: 10
+  tillerless: true
+  wait: true
+  timeout: 600
+  # createNamespace: false
+
+templates:
+  default: &default
+    namespace: broker-portal-{{`{{ .Environment.Name }}`}}ocp
+    labels:
+      channel: broker-portal
+    missingFileHandler: Warn
+    values:
+    - ../../config/default.yaml
+    - ../../config/environment/{{ .Environment.Name }}.yaml
+
+releases:
+- name: abachatbot-react-ui-service
+  chart: ../../charts/base/nodejs
+  <<: *default
+
+- name: agentconnect-manage-site-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: alternatequotedetails-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: app-document-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: app-operations-services
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: app-report-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: app-summary-service
+  chart: ../../charts/base/nodejs
+  <<: *default
+
+- name: bpreimagine-react-ui-service
+  chart: ../../charts/base/nodejs
+  <<: *default
+
+- name: broker-assistant-orchestration-service
+  chart: ../../charts/base/python
+  <<: *default
+
+- name: commission-document-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: commission-insight-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: commission-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: manage-ace-profile-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: manage-certificate-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: manage-profile-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: member-enrollment-service
+  chart: ../../charts/base/kafka
+  <<: *default
+
+- name: partner-registration-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: producer-document-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: producer-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: renewal-documents-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: renewal-insight-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: renewal-report-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: renewal-services
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: renewaldetails-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: report-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: two-factor-auth-ui
+  chart: ../../charts/base/nodejs
+  <<: *default
+
+- name: user-profile-service
+  chart: ../../charts/base/java
+  <<: *default

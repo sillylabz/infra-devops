@@ -1,0 +1,3 @@
+{{- include "library-nginx.reencrypt" (list . "{{ Release.Name }}.reencrypt") -}}
+{{- define "{{ Release.Name }}.reencrypt" -}}
+{{- end -}}

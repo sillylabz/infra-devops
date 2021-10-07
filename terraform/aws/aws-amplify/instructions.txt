@@ -1,0 +1,44 @@
+AWS Serverless with Amplify
+===========================
+app code git repo : git@github.com:hernanku/wildrydes-site.git
+
+
+- Launch AWS Amplify to host static website
+    - Open Amplify console 
+    - Get started 
+    - Select repository provider (github)
+        Would need to authenticate Amplify to github
+    - Select repository and branch
+    - Follow instructions to deploy the web app
+    - Make change to index.html and commit the code to see auto deployment pipleine of new changes
+
+
+- Launch AWS Cognito to manage users
+    - Follow steps to create a cognito user pool
+    - Add wildrydes application to cognito pool
+
+
+- Create backend
+    - Create DynamoDB table for 
+        - Rides for the Table name
+        - RideId for the Partition key 
+        - select String for the key type
+        - Use default settings
+        - Copy table ARN
+            arn:aws:dynamodb:us-east-1:107813131109:table/Rides
+
+
+    - Create IAM role for lambda function
+        - role name = WildRydesLambda
+        - Add managed policies
+            - AWSLambdaBasicExecutionRole
+                cloudwatch permission
+        - Add permission to lambda to access created dynamodb table
+
+
+    - Create lambda function
+
+
+
+
+

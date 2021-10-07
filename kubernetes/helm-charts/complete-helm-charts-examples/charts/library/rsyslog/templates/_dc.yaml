@@ -1,0 +1,176 @@
+{{- define "library-rsyslog.dc.tpl" -}}
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: {{ .Release.Name }}
+    repo: broker-helm-charts
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ include "library-rsyslog.util.resolve" (dict "key" "minReplicas" "context" $) | default 3 }}
+  selector:
+    app: {{ .Release.Name }}
+    deploymentconfig: {{ .Release.Name }}
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+        deploymentconfig: {{ .Release.Name }}
+        repo: broker-helm-charts
+    spec:
+      containers:
+      - env:
+        - name: APPLICATION_NAME
+          value: {{ .Release.Name }}
+        - name: DATA_CENTER
+          value: {{ .Values.dataCenter }}
+        - name: REGION
+          value: {{ .Values.region }}
+        - name: ENVIRONMENT
+          value: {{ .Values.environment }}
+        image: {{ .Values.registryHost }}/{{ .Values.registryOrg }}/{{ .Release.Name }}:{{ include "library-rsyslog.util.resolve" (dict "key" "imageVersion" "context" $) | default "latest" }}
+        imagePullPolicy: Always
+        livenessProbe:
+          exec:
+            command:
+            - /usr/bin/pgrep
+            - rsyslogd
+          failureThreshold: 10
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: {{ .Release.Name }}
+        ports:
+        - containerPort: 6514
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - /usr/bin/pgrep
+            - rsyslogd
+          failureThreshold: 10
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: {{ include "library-rsyslog.util.resolve" (dict "key" "resourceLimitsCpu" "context" $) | default "0.5" | quote }}
+            memory: {{ include "library-rsyslog.util.resolve" (dict "key" "resourceLimitsMemory" "context" $) | default "1Gi" | quote }}
+          requests:
+            cpu: {{ include "library-rsyslog.util.resolve" (dict "key" "resourceRequestsCpu" "context" $) | default "0.25" | quote }}
+            memory: {{ include "library-rsyslog.util.resolve" (dict "key" "resourceRequestsMemory" "context" $) | default "500Mi" | quote }}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /app/config
+          name: volume-rsyslog-config
+        {{- if not (or (eq "prod" .Values.environment) (eq "dr" .Values.environment)) }}
+        - mountPath: /app/logs
+          name: aggregated-logs
+        {{- end }}
+      {{- if not (or (eq "prod" .Values.environment) (eq "dr" .Values.environment)) }}
+      - env:
+        - name: CLIENT_NAME
+          value: {{ include "library-rsyslog.util.resolve" (dict "key" "splunkClientName" "context" $) | quote }}
+        - name: SPLUNK_START_ARGS
+          value: {{ include "library-rsyslog.util.resolve" (dict "key" "splunkStartArgs" "context" $) | quote }}
+        - name: SPLUNK_PASSWORD
+          value: {{ include "library-rsyslog.util.resolve" (dict "key" "splunkPassword" "context" $) | quote }}
+        - name: SPLUNK_HOST
+          value: {{ include "library-rsyslog.util.resolve" (dict "key" "splunkHost" "context" $) | quote }}
+        - name: SPLUNK_INDEX_NAME
+          value: {{ include "library-rsyslog.util.resolve" (dict "key" "splunkIndexName" "context" $) | quote }}
+        image: {{ .Values.registryHost }}/{{ .Values.registryOrg }}/broker-splunk-forwarder:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          exec:
+            command:
+            - /usr/bin/pgrep
+            - splunkd
+          failureThreshold: 10
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: broker-splunk-forwarder-sidecar
+        ports:
+        - containerPort: 9997
+          protocol: TCP
+        readinessProbe:
+          exec:
+            command:
+            - /usr/bin/pgrep
+            - splunkd
+          failureThreshold: 10
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: 200m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /app/logs
+          name: aggregated-logs
+        - mountPath: /app/splunk-config
+          name: volume-splunk-forwarder
+      {{- end }}
+      dnsConfig:
+        searches:
+        - wellpoint.com
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecretName }}
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      {{- if or (eq "prod" .Values.environment) (eq "dr" .Values.environment) }}
+      - configMap:
+          defaultMode: 420
+          name: rsyslog-server-hec
+        name: volume-rsyslog-config
+      {{- else }}
+      - emptyDir: {}
+        name: aggregated-logs
+      - configMap:
+          defaultMode: 420
+          name: rsyslog-server-suf
+        name: volume-rsyslog-config
+      - configMap:
+          items:
+          - key: inputs.conf
+            path: inputs.conf
+          - key: outputs.conf
+            path: outputs.conf
+          - key: deployment-client.conf
+            path: deployment-client.conf
+          name: splunk-forwarder
+        name: volume-splunk-forwarder
+      {{- end }}
+  triggers:
+  - type: ConfigChange
+{{- end -}}
+{{- define "library-rsyslog.dc" -}}
+{{- include "library-rsyslog.util.merge" (append . "library-rsyslog.dc.tpl") -}}
+{{- end -}}

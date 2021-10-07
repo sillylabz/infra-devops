@@ -1,0 +1,6 @@
+{
+  "service_name": "nginx-server",
+  "sample_rate": 0.0,
+  "collector_host": "localhost",
+  "collector_port": 9411
+}

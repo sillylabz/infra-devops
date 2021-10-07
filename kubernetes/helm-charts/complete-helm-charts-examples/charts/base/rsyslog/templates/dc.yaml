@@ -1,0 +1,3 @@
+{{- include "library-rsyslog.dc" (list . "{{ Release.Name }}.dc") -}}
+{{- define "{{ Release.Name }}.dc" -}}
+{{- end -}}

@@ -1,0 +1,59 @@
+# environment global
+appHost: brokerportal-uatocp.anthem.com
+configServer: https://services-broker.perf.va.anthem.com/config-server/
+domainRoot: ent-ocp-np2-useast1.aws.internal.das
+environment: uat
+indexName: brokerportal_perf
+masterUrl: https://master.ent-ocp-np2-useast1.aws.internal.das/console/project/broker-portal-uatocp/overview
+oidcClient: 0005c4c6-6a51-1d54-b4af-a38e1e870000
+oidcClientSecret: HBq0gPZZX4vx5yny5vk0Vx/HsX/qcXX6JQKjuOLLOXc=
+oidcHmacKey: brokernp2
+oidcHost: secure-gateway.uat.va.anthem.com
+registryHost: quay.apps.ent-ocp-prod-useast1.aws.internal.das
+resourceLimitsCpu: 1
+resourceLimitsMemory: 2Gi
+resourceRequestsCpu: 0.5
+resourceRequestsMemory: 1Gi
+splunkClientName: np2-broker-portaluatocp-splunk-forwarder
+splunkHost: va10n40402.wellpoint.com:9997,va33dlvpos006.wellpoint.com:9997
+splunkIndexName: brokerportal_perf
+splunkPassword: testtest
+splunkStartArgs: --accept-license
+
+# environment by type
+graphql:
+  activeProfiles: STGCLOUD
+java:
+  activeProfiles: stg,openshift
+kafka:
+  activeProfiles: stg,openshift
+nginx:
+  minReplicas: 2
+  resourceLimitsCpu: 0.5
+  resourceLimitsMemory: 4Gi
+  resourceRequestsCpu: 0.2
+  resourceRequestsMemory: 2Gi
+nodejs:
+  activeProfiles: STGCLOUD
+python:
+  activeProfiles: stgcloud
+rsyslog:
+  minReplicas: 2
+
+# environment by service
+app-report-service:
+  resourceLimitsCpu: 1
+  resourceRequestsCpu: 0.5
+  resourceRequestsMemory: 1Gi
+bpreimagine-react-ui-service:
+  resourceRequestsMemory: 512Mi
+oauth-service:
+  keyPassword: IUsNuspOQtgTNb4qaUhE
+  keystorePassword: ToHSHmAP2z8WJtjYVBII
+opportunity-service:
+  resourceRequestsMemory: 512Mi
+renewal-services:
+  resourceLimitsCpu: 250m
+renewaldetails-service:
+  resourceRequestsCpu: 100m
+  resourceRequestsMemory: 512Mi

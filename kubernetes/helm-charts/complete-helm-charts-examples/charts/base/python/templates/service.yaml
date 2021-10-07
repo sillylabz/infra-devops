@@ -1,0 +1,3 @@
+{{- include "library-python.service" (list . "{{ Release.Name }}.service") -}}
+{{- define "{{ Release.Name }}.service" -}}
+{{- end -}}

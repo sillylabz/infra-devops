@@ -1,0 +1,17 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim        
+metadata:                         
+  name: jenkins-home
+  namespace: jenkins-operator
+  labels:
+    app: jenkins-cloudops
+spec:                              
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce                
+  resources:
+    requests:
+      storage: 10Gi
+
+

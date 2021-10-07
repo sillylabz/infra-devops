@@ -1,0 +1,28 @@
+{{- define "library-java.hpa.tpl" -}}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: {{ .Release.Name }}
+    repo: broker-helm-charts
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  maxReplicas: {{ include "library-java.util.resolve" (dict "key" "maxReplicas" "context" $) | default 5 }}
+  metrics:
+  - resource:
+      name: cpu
+      targetAverageUtilization: {{ include "library-java.util.resolve" (dict "key" "cpuTargetAverageUtilization" "context" $) | default "80" }}
+    type: Resource
+  - resource:
+      name: memory
+      targetAverageUtilization: {{ include "library-java.util.resolve" (dict "key" "memoryTargetAverageUtilization" "context" $) | default "75" }}
+    type: Resource
+  minReplicas: {{ include "library-java.util.resolve" (dict "key" "minReplicas" "context" $) }}
+  scaleTargetRef:
+    kind: DeploymentConfig
+    name: {{ .Release.Name }}
+{{- end -}}
+{{- define "library-java.hpa" -}}
+{{- include "library-java.util.merge" (append . "library-java.hpa.tpl") -}}
+{{- end -}}

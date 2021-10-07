@@ -1,0 +1,25 @@
+---
+# playbook.yml
+- name: 'SSM Agent'
+  hosts: default
+  become: true
+
+  tasks:
+    - name: Download rpm file
+      get_url:
+        url: https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+        dest: /tmp/amazon-ssm-agent.rpm
+
+    - name: Install SSM agent
+      yum: 
+        name: /tmp/amazon-ssm-agent.rpm
+        state: present
+        disable_gpg_check: yes
+
+    - name: Start and enable SSM Agent
+      service:
+        name: amazon-ssm-agent
+        state: restarted
+        enabled: yes
+
+

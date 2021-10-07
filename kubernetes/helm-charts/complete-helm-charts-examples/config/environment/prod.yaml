@@ -1,0 +1,60 @@
+# environment global
+appHost: brokerportal.anthem.com
+configServer: https://edgeserver-broker.anthem.com/config-server/
+domainRoot: ent-ocp-prod-useast1.aws.internal.das
+environment: prod
+indexName: brokerportal_perf
+masterUrl: https://master.ent-ocp-prod-useast1.aws.internal.das/console/project/broker-portal-uatocp/overview
+minReplicas: 3
+oidcClient: 00098598-464d-1d2e-b6b7-180b1ee60000
+oidcClientSecret: sQGRcvBq/gbyjZppCe2m0XJBBZuKWVougEilAZp5TBE=
+oidcHmacKey: brokerprod
+oidcHost: secure-gateway.anthem.com
+probeTimeoutSeconds: 30
+region: useast1
+registryHost: quay.apps.ent-ocp-prod-useast1.aws.internal.das
+resourceLimitsCpu: 1
+resourceLimitsMemory: 2Gi
+resourceRequestsCpu: 0.5
+resourceRequestsMemory: 1Gi
+syslogClientResourceLimitsCpu: 50m
+syslogClientResourceLimitsMemory: 256Mi
+syslogClientResourceRequestsCpu: 30m
+syslogClientResourceRequestsMemory: 128Mi
+
+# environment by type
+java:
+  activeProfiles: prod,openshift
+graphql:
+  activeProfiles: PRODCLOUD
+kafka:
+  activeProfiles: prod,openshift
+  probeTimeoutSeconds: 5
+nginx:
+  probeTimeoutSeconds: 30
+  resourceLimitsCpu: 0.5
+  resourceLimitsMemory: 4Gi
+  resourceRequestsCpu: 0.2
+  resourceRequestsMemory: 2Gi
+nodejs:
+  activeProfiles: PRODCLOUD
+python:
+  activeProfiles: prodcloud
+rsyslog:
+  minReplicas: 5
+  maxReplicas: 10
+
+# environment by service
+app-report-service:
+  resourceLimitsCpu: 1
+  resourceRequestsCpu: 0.5
+  resourceRequestsMemory: 1Gi
+bpreimagine-react-ui-service:
+  resourceRequestsMemory: 512Mi
+opportunity-service:
+  resourceRequestsMemory: 512Mi
+renewal-services:
+  resourceLimitsCpu: 250m
+renewaldetails-service:
+  resourceRequestsCpu: 100m
+  resourceRequestsMemory: 512Mi

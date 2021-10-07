@@ -1,0 +1,58 @@
+{{- define "library-rsyslog.cm.tpl" }}
+{{- if or (eq "prod" .Values.environment) (eq "dr" .Values.environment) }}
+apiVersion: v1
+kind: List
+items:
+- apiVersion: v1
+  data:
+    {{ (.Files.Glob "config/rsyslog-server-hec/*").AsConfig | indent 4 }}
+  kind: ConfigMap
+  metadata:
+    labels:
+      app: {{ .Release.Name }}
+      repo: broker-helm-charts
+    name: rsyslog-server-hec
+    namespace: {{ .Release.Namespace }}
+{{- else }}
+apiVersion: v1
+kind: List
+items:
+- apiVersion: v1
+  data:
+    {{ (.Files.Glob "config/rsyslog-server-suf/*").AsConfig | indent 2 }}
+  kind: ConfigMap
+  metadata:
+    labels:
+      app: {{ .Release.Name }}
+      repo: broker-helm-charts
+    name: rsyslog-server-suf
+    namespace: {{ .Release.Namespace }}
+- apiVersion: v1
+  data:
+    {{ range $path, $_ :=  .Files.Glob  "config/splunk-forwarder/**" }}
+    {{$path | base}}: |
+{{ $.Files.Get $path | indent 6 }}
+    {{ end }}
+  kind: ConfigMap
+  metadata:
+    labels:
+      app: {{ .Release.Name }}
+      repo: broker-helm-charts
+    name: splunk-forwarder
+    namespace: {{ .Release.Namespace }}
+{{- end }}
+- apiVersion: v1
+  data:
+    {{ (.Files.Glob "config/rsyslog-client/*").AsConfig | indent 2 }}
+  kind: ConfigMap
+  metadata:
+    labels:
+      app: {{ .Release.Name }}
+      repo: broker-helm-charts
+    name: rsyslog-client
+    namespace: {{ .Release.Namespace }}
+
+{{- end }}
+{{- define "library-rsyslog.cm" }}
+{{- include "library-rsyslog.util.merge" (append . "library-rsyslog.cm.tpl") }}
+{{- end }}

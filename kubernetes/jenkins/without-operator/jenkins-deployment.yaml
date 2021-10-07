@@ -1,0 +1,71 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jenkins
+  labels:
+    name: jenkins
+
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: jenkins-master-pvc
+#   namespace: jenkins
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 10Gi
+#   storageClassName: standard
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-master
+  namespace: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins-master
+  template:
+    metadata:
+      labels:
+        app: jenkins-master
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+      - name: jenkins-master
+        image: jenkins/jenkins:lts
+        ports:
+        - containerPort: 8080
+        # volumeMounts:
+        # - name: jenkins-home
+        #   mountPath: /var/jenkins_home
+      # volumes:
+      # - name: jenkins-home
+      #   persistentVolumeClaim:
+      #     claimName: jenkins-master-pvc
+
+---
+apiVersion: v1                  # API version
+kind: Service                   # Type of kubernetes resource
+metadata:
+  name: jenkins-master
+  namespace: jenkins    # Name of the kubernetes resource
+spec:
+  type: NodePort            # Exposes the service by opening a port on each node
+  selector:
+    app: jenkins-master     # Any Pod matching the label `app=polling-app-client` will be picked up by this service
+  ports:                        # Forward incoming connections on port 80 to the target port 80 in the Pod
+  - name: http
+    port: 8080
+    targetPort: 8080
+
+
+

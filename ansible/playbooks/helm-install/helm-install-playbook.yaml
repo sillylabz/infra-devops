@@ -1,0 +1,30 @@
+---
+- name: Install helm 3
+  hosts: localhost
+  become: yes
+
+  tasks:
+    - name: Get helm file
+      shell: 
+        cmd: curl https://baltocdn.com/helm/signing.asc | sudo apt-key add - 
+        warn: false
+
+    - name: Install transport https
+      apt: 
+        name: apt-transport-https
+        state: present
+
+    - name: Update helm debian sources list
+      shell: 
+        cmd: echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+
+    - name: Update apt repo
+      apt:
+        state: latest
+        update_cache: yes
+
+    - name: Install helm
+      apt:
+        name: helm
+        state: present
+

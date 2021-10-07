@@ -1,0 +1,76 @@
+# Creates a cluster with a managed node group and a Fargate profile
+# https://eksctl.io/usage/schema/
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: test-eks-dev
+  region: us-east-1
+  version: "1.18"
+  tags:
+    env: test-eks-dev
+
+iam:
+  withOIDC: true
+
+vpc:
+# References:
+# Creating a VPC for your Amazon EKS cluster
+# - https://docs.aws.amazon.com/eks/latest/userguide/create-public-private-vpc.html
+# Cluster VPC considerations
+# - https://docs.aws.amazon.com/eks/latest/userguide/network_reqs.html
+# Private clusters
+# - https://docs.aws.amazon.com/eks/latest/userguide/private-clusters.html
+# Tag requirements
+# - https://eksctl.io/usage/vpc-networking/#use-existing-vpc-any-custom-configuration
+
+# NOTE: if you enable these "private" subnets in the cluster, you can put the
+# managed node group in the private network, but the cluster API endpoint
+# needs to be public.
+  clusterEndpoints:
+    # publicAccess will changed later to false per the instructions
+    publicAccess:  true
+    privateAccess: true
+
+# Requires cluster autoscaler:
+# https://docs.aws.amazon.com/eks/latest/userguide/cluster-autoscaler.html
+managedNodeGroups:
+  - name: mng-workers
+    instanceType: "t3a.xlarge" # https://aws.amazon.com/ec2/instance-types/
+    desiredCapacity: 2
+    minSize: 2
+    maxSize: 5
+    volumeSize: 250 # gigabytes
+    volumeType: gp2
+    volumeEncrypted: true
+    maxPodsPerNode: 10
+    # NOTE: in order to put `true` here, you need to add the "private" subnets
+    # but in that case, the cluster API endpoint needs to be public. Just try
+    # to put all the critical application pods in the fargate profile.
+    privateNetworking: false
+    iam:
+      withAddonPolicies:
+        autoScaler: true
+        externalDNS: true
+        certManager: true
+        ebs: true
+        fsx: true
+        efs: true
+        albIngress: true
+        cloudWatch: true
+    labels:
+      node-class: generic-app-node
+      group-name: mng-workers
+    tags:
+      env: test-eks-dev
+      group-name: mng-workers
+
+fargateProfiles:
+  - name: fp-test-apps
+    selectors:
+      - namespace: test-eks-dev
+    tags:
+      env: test-eks-dev
+      name: fp-test-apps
+

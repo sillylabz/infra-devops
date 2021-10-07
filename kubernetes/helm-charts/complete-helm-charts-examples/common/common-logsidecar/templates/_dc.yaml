@@ -1,0 +1,181 @@
+{{- define "common-logsidecar.dc.tpl" -}}
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: {{ .Chart.Name }}
+  name: {{ .Chart.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 2
+  selector:
+    app: {{ .Chart.Name }}
+    deploymentconfig: {{ .Chart.Name }}
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      labels:
+        app: {{ .Chart.Name }}
+        deploymentconfig: {{ .Chart.Name }}
+    spec:
+      containers:
+      - env:
+        - name: logsidecar_OPTS
+          value: {{ .Values.logsidecar.parameters.logsidecar_OPTS }}
+        - name: SPRING_CLOUD_CONFIG_URI
+          value: {{ .Values.logsidecar.parameters.SPRING_CLOUD_CONFIG_URI }}
+        - name: SPRING_PROFILES_ACTIVE
+          value: {{ .Values.logsidecar.parameters.SPRING_PROFILES_ACTIVE }}
+        - name: HEALTH_CONFIG_TIMETOLIVE
+          value: "1800000"
+        - name: KEYSTORE_FILE
+          value: /app/certs/keystore.jks
+        - name: KEYSTORE_PASSWORD
+          value: ""
+        - name: KEY_PASSWORD
+          value: ""
+        - name: KEY_ALIAS
+          value: ""
+        {{- range $key, $val := .Values.app_versions }}
+        {{ if eq $key $.Chart.Name }}
+        image: {{ $.Values.env_settings.REGISTRY_HOST }}/{{ $.Values.env_settings.PROJECT_PREFIX }}/{{ $.Chart.Name }}:{{ $val }}
+        {{ end }}
+        {{- end }}
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /{{ .Values.logsidecar.healthEndpoint }}
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        name: {{ .Chart.Name }}
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: /health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 120
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: 5
+        resources:
+          limits:
+            cpu: {{ .Values.logsidecar.parameters.RESOURCE_LIMITS_CPU }}
+            memory: {{ .Values.logsidecar.parameters.RESOURCE_LIMITS_MEMORY }}
+          requests:
+            cpu: {{ .Values.logsidecar.parameters.RESOURCE_REQUESTS_CPU }}
+            memory: {{ .Values.logsidecar.parameters.RESOURCE_REQUESTS_MEMORY }}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /app/truststore
+          name: volume-truststore
+          readOnly: true
+        - mountPath: /app/certs
+          name: volume-keystore
+          readOnly: true
+        - mountPath: /app/logs
+          name: app-logs
+        - mountPath: /app/audit
+          name: audit-logs
+
+      - env:
+        - name: APPLICATION_NAME
+          value: {{ .Chart.Name }}
+        - name: DATA_CENTER
+          value: {{ .Values.env_settings.DATA_CENTER }}
+        - name: REGION
+          value: {{ .Values.env_settings.REGION }}
+        - name: ENVIRONMENT
+          value: {{ .Values.env_settings.ENVIRONMENT }}
+        image: quay.apps.ent-ocp-np2-useast1.aws.internal.das/broker_portal/broker-rsyslog-client:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          exec:
+            command:
+            - /usr/bin/pgrep
+            - rsyslogd
+          failureThreshold: 10
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: {{ .Chart.Name }}-logging-sidecar
+        readinessProbe:
+          exec:
+            command:
+            - /usr/bin/pgrep
+            - rsyslogd
+          failureThreshold: 10
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: {{ .Values.logsidecar.parameters.RESOURCE_LIMITS_CPU }}
+            memory: {{ .Values.logsidecar.parameters.RESOURCE_LIMITS_MEMORY }}
+          requests:
+            cpu: {{ .Values.logsidecar.parameters.RESOURCE_REQUESTS_CPU }}
+            memory: {{ .Values.logsidecar.parameters.RESOURCE_REQUESTS_MEMORY }}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /app/logs
+          name: app-logs
+        - mountPath: /app/audit
+          name: audit-logs
+        - mountPath: /app/config
+          name: volume-rsyslog-config
+      dnsConfig:
+        searches:
+        - wellpoint.com
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: {{ .Values.env_settings.IMAGE_PULL_SECRET_NAME }}
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir: {}
+        name: app-logs
+      - emptyDir: {}
+        name: audit-logs
+      - configMap:
+          defaultMode: 420
+          name: rsyslog-client
+        name: volume-rsyslog-config
+      - name: volume-truststore
+        secret:
+          defaultMode: 420
+          secretName: brokertruststore
+          # ---- read secret name from hierarchy
+      - name: volume-keystore
+        secret:
+          defaultMode: 420
+          secretName: empty-secret
+          # ---- read secret name from hierarchy
+  triggers:
+  - type: ConfigChange
+{{- end -}}
+{{- define "common-logsidecar.dc" -}}
+{{- include "common-logsidecar.util.merge" (append . "common-logsidecar.dc.tpl") -}}
+{{- end -}}

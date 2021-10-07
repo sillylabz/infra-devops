@@ -1,0 +1,24 @@
+{{- define "library-rsyslog.service.tpl" -}}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Release.Name }}
+    repo: broker-helm-charts
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - name: 6514-tcp
+    port: 6514
+    protocol: TCP
+    targetPort: 6514
+  selector:
+    app: {{ .Release.Name }}
+    deploymentconfig: {{ .Release.Name }}
+  sessionAffinity: None
+  type: ClusterIP
+{{- end -}}
+{{- define "library-rsyslog.service" -}}
+{{- include "library-rsyslog.util.merge" (append . "library-rsyslog.service.tpl") -}}
+{{- end -}}

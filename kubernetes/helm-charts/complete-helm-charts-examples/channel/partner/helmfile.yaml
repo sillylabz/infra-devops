@@ -1,0 +1,44 @@
+environments:
+  default:
+  dev:
+  qa:
+  uat:
+  prod:
+  dr:
+  blue:
+
+helmDefaults:
+  recreatePods: true
+  historyMax: 10
+  tillerless: true
+  wait: true
+  timeout: 600
+  # createNamespace: false
+
+templates:
+  default: &default
+    namespace: broker-portal-{{`{{ .Environment.Name }}`}}ocp
+    labels:
+      channel: broker-partner
+    missingFileHandler: Warn
+    values:
+    - ../../config/default.yaml
+    - ../../config/environment/{{ .Environment.Name }}.yaml
+
+releases:
+
+- name: broker-graphql-server
+  chart: ../../charts/base/graphql
+  <<: *default
+
+- name: graphql-bob-service
+  chart: ../../charts/base/graphql
+  <<: *default
+
+- name: graphql-renewals-service
+  chart: ../../charts/base/graphql
+  <<: *default
+
+- name: graphql-useractivity-service
+  chart: ../../charts/base/graphql
+  <<: *default

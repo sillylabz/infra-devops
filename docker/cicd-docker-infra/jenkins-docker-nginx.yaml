@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  jenkins:
+    image: jenkins.nginx.docker:lts
+    # build:
+    #   context: ./
+    #   dockerfile: Dockerfile
+    networks: 
+      - jenkins-docker
+    container_name: jenkins
+    ports:
+      - '2022:22'
+      - '50000:50000'
+      - '50022:50022'
+    volumes:
+      - /Users/admin/docker-data/jenkins:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - UID_JENKINS=${UID_JENKINS:-1000}
+      - GID_JENKINS=${GID_JENKINS:-1000}
+      #- JENKINS_OPTS=${JENKINS_OPTS:-"--prefix=/jenkins"}
+      - JAVA_OPTS=-Xms512m -Xmx2g -Djava.awt.headless=true
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    networks: 
+      - jenkins-docker
+    container_name: nginx
+    ports:
+      - '8080:80'
+      #- '8443:443'
+    volumes:
+      - ${NGINX_DEFAULT_CONF:-./nginx-app-configs/default.conf}:/etc/nginx/conf.d/default.conf
+      # - ${NGINX_LOGS:-./logs/nginx/jenkins}:/var/log/nginx/jenkins
+      #- ${NGINX_SSL:-./ssl}:/etc/ssl:ro
+    restart: always
+
+networks:
+  jenkins-docker: 
+    name: jenkins-docker

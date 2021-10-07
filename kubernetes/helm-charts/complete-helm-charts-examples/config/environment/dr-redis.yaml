@@ -1,0 +1,4 @@
+global:
+  imageRegistry: quay.apps.ent-ocp-dr-useast2.aws.internal.das
+securityContext:
+  runAsUser: 1000300001

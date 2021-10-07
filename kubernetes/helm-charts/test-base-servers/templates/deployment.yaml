@@ -1,0 +1,43 @@
+{{- range $test_servers := .Values.test_servers }}
+---                                                                         
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ $test_servers.name }}"
+  namespace: "test-servers"
+  labels:
+    app.kubernetes.io/stack: 
+      "{{ $test_servers.name }}"
+spec:
+  replicas: {{ $test_servers.replicaCount }}
+  selector:
+    matchLabels:
+      app: "{{ $test_servers.name }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ $test_servers.name }}"
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: eks.amazonaws.com/compute-type
+                operator: NotIn
+                values:
+                - fargate
+      containers:
+        - name: "{{ $test_servers.name }}"
+          image: "{{ $test_servers.image}}:{{ $test_servers.image_tag | default "latest" }}"
+          command: ["/bin/sleep", "3650d"]
+          imagePullPolicy: {{ $test_servers.image_pull_policy }}
+          resources:
+            requests:
+                memory: "{{ $test_servers.memory_request }}"
+                cpu: "{{ $test_servers.cpu_request }}"
+            limits:
+                memory: "{{ $test_servers.memory_limit }}"
+                cpu: "{{ $test_servers.cpu_limit }}"
+{{- end }}
+

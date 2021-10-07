@@ -1,0 +1,80 @@
+environments:
+  default:
+  dev:
+  qa:
+  uat:
+  prod:
+  dr:
+  blue:
+
+helmDefaults:
+  recreatePods: true
+  historyMax: 10
+  tillerless: true
+  wait: true
+  timeout: 600
+  # createNamespace: false
+
+templates:
+  default: &default
+    namespace: broker-portal-{{`{{ .Environment.Name }}`}}ocp
+    labels:
+      channel: broker-bits
+    missingFileHandler: Warn
+    values:
+    - ../../config/default.yaml
+    - ../../config/environment/{{ .Environment.Name }}.yaml
+
+releases:
+
+- name: appointment-event-workflow-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: broker-appointment-dashboard-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: broker-appointment-payment-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: broker-appointment-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: broker-backgroundcheck-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: broker-dashboard-service
+  chart: ../../charts/base/graphql
+  <<: *default
+
+- name: broker-eft-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: broker-form-pdf-generator
+  chart: ../../charts/base/nodejs
+  <<: *default
+
+- name: broker-forms-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: broker-onboarding-react-ui-service
+  chart: ../../charts/base/nodejs
+  <<: *default
+
+- name: broker-signup-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: event-manager-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: group-structure-service
+  chart: ../../charts/base/java
+  <<: *default

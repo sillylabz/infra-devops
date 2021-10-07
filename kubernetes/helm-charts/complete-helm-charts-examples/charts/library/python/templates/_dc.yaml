@@ -1,0 +1,154 @@
+{{- define "library-python.dc.tpl" -}}
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: {{ .Release.Name }}
+    repo: broker-helm-charts
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ include "library-python.util.resolve" (dict "key" "minReplicas" "context" $) | default 2 }}
+  selector:
+    app: {{ .Release.Name }}
+    deploymentconfig: {{ .Release.Name }}
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+        deploymentconfig: {{ .Release.Name }}
+        repo: broker-helm-charts
+    spec:
+      containers:
+      - env:
+        - name: GUNICORN_CMD_ARGS
+          value: --preload --timeout=120 --bind=0.0.0.0:8080 --workers=4
+        - name: REQUESTS_CA_BUNDLE
+          value: /app/cacert.pem
+        - name: ENVIRONMENT
+          value: {{ include "library-python.util.resolve" (dict "key" "activeProfiles" "context" $) | default "CHANGE_ME" }}
+        - name: env
+          value: {{ include "library-python.util.resolve" (dict "key" "activeProfiles" "context" $) | default "CHANGE_ME" }}
+        image: {{ .Values.registryHost }}/broker_portal/broker-assistant-orchestration-service:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: {{ include "library-python.util.resolve" (dict "key" "healthEndpoint" "context" $) | default "/health" }}
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: {{ include "library-python.util.resolve" (dict "key" "probeInitialDelaySeconds" "context" $) | default 90 }}
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: {{ include "library-python.util.resolve" (dict "key" "probeTimeoutSeconds" "context" $) | default 5 }}
+        name: {{ .Release.Name }}
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 10
+          httpGet:
+            path: {{ include "library-python.util.resolve" (dict "key" "healthEndpoint" "context" $) | default "/health" }}
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: {{ include "library-python.util.resolve" (dict "key" "probeInitialDelaySeconds" "context" $) | default 90 }}
+          periodSeconds: 60
+          successThreshold: 1
+          timeoutSeconds: {{ include "library-python.util.resolve" (dict "key" "probeTimeoutSeconds" "context" $) | default 5 }}
+        resources:
+          limits:
+            cpu: {{ include "library-python.util.resolve" (dict "key" "resourceLimitsCpu" "context" $) | default "250m" | quote }}
+            memory: {{ include "library-python.util.resolve" (dict "key" "resourceLimitsMemory" "context" $) | default "768Mi" | quote }}
+          requests:
+            cpu: {{ include "library-python.util.resolve" (dict "key" "resourceRequestsCpu" "context" $) | default "100m" | quote }}
+            memory: {{ include "library-python.util.resolve" (dict "key" "resourceRequestsMemory" "context" $) | default "512Mi" | quote }}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /app/logs
+          name: app-logs
+        - mountPath: /app/audit
+          name: audit-logs
+      - env:
+        - name: APPLICATION_NAME
+          value: {{ .Release.Name }}
+        - name: DATA_CENTER
+          value: {{ .Values.dataCenter }}
+        - name: REGION
+          value: {{ .Values.region }}
+        - name: ENVIRONMENT
+          value: {{ include "library-python.util.resolve" (dict "key" "activeProfiles" "context" $) | default "CHANGE_ME" }}
+        image: {{ .Values.registryHost }}/{{ .Values.registryOrg }}/broker-rsyslog-client:latest
+        imagePullPolicy: Always
+        livenessProbe:
+          exec:
+            command:
+            - /usr/bin/pgrep
+            - rsyslogd
+          failureThreshold: 10
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: {{ .Release.Name }}-logging-sidecar
+        readinessProbe:
+          exec:
+            command:
+            - /usr/bin/pgrep
+            - rsyslogd
+          failureThreshold: 10
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          limits:
+            cpu: {{ include "library-python.util.resolve" (dict "key" "syslogClientResourceLimitsCpu" "context" $) | default "10m" | quote }}
+            memory: {{ include "library-python.util.resolve" (dict "key" "syslogClientResourceLimitsMemory" "context" $) | default "32Mi" | quote }}
+          requests:
+            cpu: {{ include "library-python.util.resolve" (dict "key" "syslogClientResourceRequestsCpu" "context" $) | default "5m" | quote }}
+            memory: {{ include "library-python.util.resolve" (dict "key" "syslogClientResourceRequestsMemory" "context" $) | default "16Mi" | quote }}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /app/logs
+          name: app-logs
+        - mountPath: /app/audit
+          name: audit-logs
+        - mountPath: /app/config
+          name: volume-rsyslog-config
+      dnsConfig:
+        searches:
+        - wellpoint.com
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecretName }}
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - emptyDir: {}
+        name: app-logs
+      - emptyDir: {}
+        name: audit-logs
+      - configMap:
+          defaultMode: 420
+          name: rsyslog-client
+        name: volume-rsyslog-config
+  triggers:
+  - type: ConfigChange
+{{- end -}}
+{{- define "library-python.dc" -}}
+{{- include "library-python.util.merge" (append . "library-python.dc.tpl") -}}
+{{- end -}}

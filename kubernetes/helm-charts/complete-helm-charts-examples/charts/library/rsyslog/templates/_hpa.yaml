@@ -1,0 +1,28 @@
+{{- define "library-rsyslog.hpa.tpl" -}}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: {{ .Release.Name }}
+    repo: broker-helm-charts
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  maxReplicas: {{ include "library-rsyslog.util.resolve" (dict "key" "maxReplicas" "context" $) | default 5 }}
+  metrics:
+  - resource:
+      name: cpu
+      targetAverageUtilization: 90
+    type: Resource
+  - resource:
+      name: memory
+      targetAverageUtilization: 75
+    type: Resource
+  minReplicas: {{ include "library-rsyslog.util.resolve" (dict "key" "minReplicas" "context" $)  | default 3 }}
+  scaleTargetRef:
+    kind: DeploymentConfig
+    name: {{ .Release.Name }}
+{{- end -}}
+{{- define "library-rsyslog.hpa" -}}
+{{- include "library-rsyslog.util.merge" (append . "library-rsyslog.hpa.tpl") -}}
+{{- end -}}

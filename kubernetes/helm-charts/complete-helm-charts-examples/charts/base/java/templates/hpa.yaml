@@ -1,0 +1,3 @@
+{{- include "library-java.hpa" (list . "{{ Release.Name }}.hpa") -}}
+{{- define "{{ Release.Name }}.hpa" -}}
+{{- end -}}

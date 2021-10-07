@@ -1,0 +1,49 @@
+environments:
+  default:
+  dev:
+  qa:
+  uat:
+  prod:
+  dr:
+  blue:
+
+helmDefaults:
+  recreatePods: true
+  historyMax: 10
+  tillerless: true
+  wait: true
+  timeout: 600
+  # createNamespace: false
+
+templates:
+  base: &base
+    namespace: broker-portal-{{`{{ .Environment.Name }}`}}ocp
+    labels:
+      channel: broker-core
+    missingFileHandler: Warn
+  default: &default
+    <<: *base
+    values:
+    - ../../config/default.yaml
+    - ../../config/environment/{{ .Environment.Name }}.yaml
+
+releases:
+- name: broker-nginx
+  chart: ../../charts/base/nginx
+  <<: *default
+
+- name: broker-rsyslog-server
+  chart: ../../charts/base/rsyslog
+  <<: *default
+
+- name: oauth-service
+  chart: ../../charts/base/java
+  <<: *default
+
+- name: redis-sentinel
+  chart: bitnami/redis
+  version: 10.6.17
+  <<: *base
+  values:
+  - ../../config/default-redis.yaml
+  - ../../config/environment/{{ .Environment.Name }}-redis.yaml

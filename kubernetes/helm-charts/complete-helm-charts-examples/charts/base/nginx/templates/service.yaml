@@ -1,0 +1,3 @@
+{{- include "library-nginx.service" (list . "{{ Release.Name }}.service") -}}
+{{- define "{{ Release.Name }}.service" -}}
+{{- end -}}

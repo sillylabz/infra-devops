@@ -1,0 +1,28 @@
+{{- define "library-graphql.hpa.tpl" -}}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: {{ .Release.Name }}
+    repo: broker-helm-charts
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  maxReplicas: {{ include "library-graphql.util.resolve" (dict "key" "maxReplicas" "context" $) | default 5 }}
+  metrics:
+  - resource:
+      name: cpu
+      targetAverageUtilization: {{ include "library-graphql.util.resolve" (dict "key" "cpuTargetAverageUtilization" "context" $) | default "80" }}
+    type: Resource
+  - resource:
+      name: memory
+      targetAverageUtilization: {{ include "library-graphql.util.resolve" (dict "key" "memoryTargetAverageUtilization" "context" $) | default "75" }}
+    type: Resource
+  minReplicas: {{ include "library-graphql.util.resolve" (dict "key" "minReplicas" "context" $) }}
+  scaleTargetRef:
+    kind: DeploymentConfig
+    name: {{ .Release.Name }}
+{{- end -}}
+{{- define "library-graphql.hpa" -}}
+{{- include "library-graphql.util.merge" (append . "library-graphql.hpa.tpl") -}}
+{{- end -}}

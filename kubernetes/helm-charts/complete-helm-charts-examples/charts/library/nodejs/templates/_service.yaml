@@ -1,0 +1,24 @@
+{{- define "library-nodejs.service.tpl" -}}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Release.Name }}
+    repo: broker-helm-charts
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - name: {{ .Values.port | default 8080 }}-tcp
+    port: {{ .Values.port | default 8080 }}
+    protocol: TCP
+    targetPort: {{ .Values.targetPort | default 8080 }}
+  selector:
+    app: {{ .Release.Name }}
+    deploymentconfig: {{ .Release.Name }}
+  sessionAffinity: None
+  type: ClusterIP
+{{- end -}}
+{{- define "library-nodejs.service" -}}
+{{- include "library-nodejs.util.merge" (append . "library-nodejs.service.tpl") -}}
+{{- end -}}

@@ -1,0 +1,550 @@
+# global
+cpuTargetAverageUtilization: 90
+dataCenter: AWS
+healthEndpoint: /health
+imagePullSecretName: brokerpullsecret
+imageVersion: latest
+maxReplicas: 5
+memoryTargetAverageUtilization: 75
+minReplicas: 2
+probeInitialDelaySeconds: 60
+probeTimeoutSeconds: 5
+region: useast1
+registryOrg: broker_portal
+resourceLimitsCpu: 250m
+resourceLimitsMemory: 768Mi
+resourceRequestsCpu: 100m
+resourceRequestsMemory: 512Mi
+syslogClientResourceLimitsCpu: 20m
+syslogClientResourceLimitsMemory: 64Mi
+syslogClientResourceRequestsCpu: 10m
+syslogClientResourceRequestsMemory: 32Mi
+
+# by type
+graphql:
+  probeInitialDelaySeconds: 60
+java:
+  javaOptions: -Xms512m -Xmx2g -Djavax.net.ssl.trustStore=/app/truststore/brokertruststore
+nginx:
+  minReplicas: 3
+  probeInitialDelaySeconds: 20
+  probeTimeoutSeconds: 5
+nodejs:
+  probeInitialDelaySeconds: 60
+  certificateSecretName: root-chain.pem
+rsyslog:
+  resourceLimitsCpu: 0.5
+  resourceLimitsMemory: 1Gi
+  resourceRequestsCpu: 0.25
+  resourceRequestsMemory: 500Mi
+  minReplicas: 3
+
+# by applications
+abachatbot-react-ui-service:
+  certificateSecretName: partner-jwtcert.pem
+  contacts:
+    primary:
+    - harish.gotour@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+
+agentconnect-manage-site-service:
+  contacts:
+    primary:
+    - suresh.ramasamy2@anthem.com
+    dl:
+    - dl-brokerportal_hydrogen@anthem.com
+  probeInitialDelaySeconds: 80
+
+alternatequotedetails-service:
+  contacts:
+    primary:
+    - suresh.ramasamy2@anthem.com
+    dl:
+    - dl-brokerportal_hydrogen@anthem.com
+  probeInitialDelaySeconds: 80
+
+app-document-service:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  probeInitialDelaySeconds: 120
+
+app-operations-services:
+  contacts:
+    primary:
+    - abhilash.gajarala@anthem.com
+    dl:
+    - dl-bp_slytherin_developers@anthem.com
+  probeInitialDelaySeconds: 120
+
+app-report-service:
+  contacts:
+    primary:
+    - arun.ac@anthem.com
+    dl:
+    - dl-bp_slytherin_developers@anthem.com
+  probeInitialDelaySeconds: 80
+  resourceLimitsCpu: 250m
+  resourceRequestsCpu: 100m
+  resourceRequestsMemory: 512Mi
+
+app-summary-service:
+  contacts:
+    primary:
+    - harish.gotour@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+
+appointment-event-workflow-service:
+  contacts:
+    primary:
+    - harish.gotour@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+
+appointment-status-polling-batch:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+
+bpreimagine-react-ui-service:
+  contacts:
+    primary:
+    - harish.gotour@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  resourceLimitsCpu: 500m
+  resourceLimitsMemory: 1Gi
+  resourceRequestsCpu: 250m
+
+broker-appointment-dashboard-service:
+  contacts:
+    primary:
+    - arun.ac@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+    - dl-bp_slytherin_developers@anthem.com
+
+broker-appointment-payment-service:
+  contacts:
+    primary:
+    - arun.ac@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+    - dl-bp_slytherin_developers@anthem.com
+
+broker-appointment-service:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    - Sarathkumar.Rajendran@empireblue.com
+    dl:
+    -  dl-bp_neptune_developers@anthem.com
+
+broker-assistant-orchestration-service:
+  contacts:
+    primary:
+    - suryavamsi.rallabandi@anthem.com
+    - anuj.sood@anthem.com
+    dl:
+    - dl-brokerportal_hisense@anthem.com
+
+broker-backgroundcheck-service:
+  contacts:
+    primary:
+    - senthilkumar.ponnusamy@anthem.com
+    dl:
+    - dl-brokerportal_technokrats@anthem.com
+
+broker-dashboard-service:
+  certificateSecretName: partner-jwtcert.pem
+  contacts:
+    primary:
+    - deep.singh@legatohealth.com
+    dl:
+    - dl-legato-calypso@anthem.com
+
+broker-eft-service:
+  contacts:
+    primary:
+    - venkat.narayanan@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+
+broker-form-pdf-generator:
+  contacts:
+    primary:
+    - Omololu.Ojo@anthem.com
+    dl:
+    - dl-brokerportal_neutrinos@anthem.com
+
+broker-forms-service:
+  contacts:
+    primary:
+    - balakrishnan.p@anthem.com
+    - BenciRaju.Darelli@anthem.com
+    dl:
+    - dl-brokerportal_technokrats@anthem.com
+  probeInitialDelaySeconds: 80
+
+broker-graphql-server:
+  certificateSecretName: partner-jwtcert.pem
+  contacts:
+    primary:
+    - harish.gotour@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  healthEndpoint: /.well-known/apollo/server-health
+
+broker-nginx:
+  contacts:
+    primary:
+    - senthilkumar.velusamy@anthem.com
+    - suresh.krishnamoorthy@anthem.com
+    - adam.stortz@anthem.com
+    dl:
+    - dl-bpdevops-support@anthem.com
+    - dl-brokerportal_guardians@anthem.com
+  imageVersion: 2.1.0
+  routeTlsTermination: passthrough
+  routeTlsInsecureEdgeTerminationPolicy: None
+
+broker-notification-service:
+  certificateSecretName: root-chain.pem
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+
+broker-onboarding-react-ui-service:
+  contacts:
+    primary:
+    - harish.gotour@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+    - dl-bp_slytherin_developers@anthem.com
+
+broker-rsyslog-server:
+  contacts:
+    primary:
+    - senthilkumar.velusamy@anthem.com
+    - suresh.krishnamoorthy@anthem.com
+    dl:
+    - dl-bpdevops-support@anthem.com
+    - dl-brokerportal_guardians@anthem.com
+  targetPort: 6514
+
+broker-signup-service:
+  contacts:
+    primary:
+    - arun.ac@anthem.com
+    dl:
+    - dl-bp_slytherin_developers@anthem.com
+
+commission-document-service:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    -  dl-bp_neptune_developers@anthem.com
+  probeInitialDelaySeconds: 180
+  resourceLimitsCpu: 1
+  resourceLimitsMemory: 4Gi
+  resourceRequestsCpu: 0.5
+  resourceRequestsMemory: 2Gi
+
+commission-insight-service:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    -  dl-bp_neptune_developers@anthem.com
+  probeInitialDelaySeconds: 90
+
+commission-service:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  probeInitialDelaySeconds: 90
+  resourceLimitsCpu: 0.5
+  resourceLimitsMemory: 2Gi
+  resourceRequestsCpu: 0.25
+  resourceRequestsMemory: 1Gi
+
+event-manager-service:
+  contacts:
+    primary:
+    - venkat.narayanan@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+
+graphql-applications-service:
+  certificateSecretName: partner-jwtcert.pem
+  contacts:
+    primary:
+    - harish.gotour@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+
+graphql-bob-service:
+  certificateSecretName: partner-jwtcert.pem
+  contacts:
+    primary:
+    - shilpi.bose@wellpoint.com
+    dl:
+    - dl-legato-calypso@anthem.com
+
+graphql-commissions-service:
+  certificateSecretName: partner-jwtcert.pem
+  contacts:
+    primary:
+    - harish.gotour@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+
+graphql-content-service:
+  certificateSecretName: partner-jwtcert.pem
+  contacts:
+    primary:
+    - harish.gotour@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+
+graphql-quotes-service:
+  certificateSecretName: partner-jwtcert.pem
+  contacts:
+    primary:
+    - reva.arora@legatohealth.com
+    dl:
+    - dl-legato-calypso@anthem.com
+
+graphql-renewals-service:
+  certificateSecretName: partner-jwtcert.pem
+  contacts:
+    primary:
+    - sri.nittala@legatohealth.com
+    dl:
+    - dl-legato-calypso@anthem.com
+
+graphql-useractivity-service:
+  certificateSecretName: partner-jwtcert.pem
+  contacts:
+    primary:
+    - SumithKumar.Narra@anthem.com
+    dl:
+    - dl-legato-calypso@anthem.com
+
+graphql-userprofile-service:
+  certificateSecretName: root-chain.pem
+  contacts:
+    primary:
+    - harish.gotour@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+
+group-structure-service:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    - Sarathkumar.Rajendran@empireblue.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  probeInitialDelaySeconds: 80
+
+manage-ace-profile-service:
+  contacts:
+    primary:
+    - abhilash.gajarala@anthem.com
+    dl:
+    - dl-bp_slytherin_developers@anthem.com
+  probeInitialDelaySeconds: 80
+
+manage-certificate-service:
+  contacts:
+    primary:
+    - sumithKumar.narra@legatohealth.com
+    - sri.nittala@legatohealth.com
+    dl:
+    - dl-legato-calypso@anthem.com
+  probeInitialDelaySeconds: 80
+
+manage-profile-service:
+  contacts:
+    primary:
+    - sumithKumar.narra@legatohealth.com
+    - sri.nittala@legatohealth.com
+    dl:
+    - dl-legato-calypso@anthem.com
+  probeInitialDelaySeconds: 80
+
+member-enrollment-service:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  javaOptions: "-Xms512m -Xmx2g -Djavax.net.ssl.trustStore=/app/truststore/brokertruststore -Djava.security.auth.login.config=/apps/certs/kafka_config/jaas.conf -Djava.security.krb5.conf=/apps/certs/kafka_config/krb5.conf"
+  probeInitialDelaySeconds: 80
+  resourceLimitsCpu: 500m
+  resourceLimitsMemory: 2Gi
+  resourceRequestsCpu: 250m
+  resourceRequestsMemory: 1Gi
+
+oauth-service:
+  contacts:
+    primary:
+    - raja.krishnanSelvaraj@empireblue.com
+    dl:
+    - dl-brokerportal_guardians@anthem.com
+  keyAlias: jwtkey
+  keyPassword: 30OibVxKp6
+  keystoreFile: /apps/certs/partner_jwtcert_qa.pem
+  keystoreSecretName: partner-jwt
+  keystorePassword: TLLSjB3dTd
+  probeInitialDelaySeconds: 30
+  resourceLimitsCpu: 2
+  resourceLimitsMemory: 4Gi
+  resourceRequestsCpu: 1
+  resourceRequestsMemory: 1Gi
+
+opportunity-service:
+  contacts:
+    primary:
+    - harish.gotour@anthem.com
+    dl:
+    -  dl-bp_neptune_developers@anthem.com
+  javaOptions: "-Xms512m -Xmx2g -Djavax.net.ssl.trustStore=/app/truststore/brokertruststore -Djava.security.auth.login.config=/apps/certs/kafka_config/jaas.conf -Djava.security.krb5.conf=/apps/certs/kafka_config/krb5.conf"
+  probeInitialDelaySeconds: 80
+  resourceLimitsCpu: 500m
+  resourceLimitsMemory: 1Gi
+  resourceRequestsCpu: 250m
+
+partner-registration-service:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  probeInitialDelaySeconds: 90
+
+producer-document-service:
+  contacts:
+    primary:
+    - venkat.narayanan@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+    - dl-bp_slytherin_developers@anthem.com
+
+producer-service:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  probeInitialDelaySeconds: 80
+
+producer-tools-auth-service:
+  contacts:
+    primary:
+    - vivek.ingale@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+
+redis:
+  contacts:
+    primary:
+    - senthilkumar.velusamy@anthem.com
+    - suresh.krishnamoorthy@anthem.com
+    dl:
+    - dl-bpdevops-support@anthem.com
+    - dl-brokerportal_guardians@anthem.com
+
+renewal-documents-service:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  probeInitialDelaySeconds: 120
+  resourceLimitsCpu: 2
+  resourceLimitsMemory: 4Gi
+  resourceRequestsCpu: 0.5
+  resourceRequestsMemory: 2Gi
+
+
+renewal-insight-service:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  probeInitialDelaySeconds: 85
+
+renewal-report-service:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  probeInitialDelaySeconds: 75
+
+renewal-services:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  probeInitialDelaySeconds: 80
+  resourceLimitsMemory: 2Gi
+  resourceRequestsCpu: 100m
+  resourceRequestsMemory: 1Gi
+
+renewaldetails-service:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  probeInitialDelaySeconds: 80
+  resourceLimitsCpu: 2
+  resourceLimitsMemory: 1Gi
+
+report-service:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  probeInitialDelaySeconds: 80
+  resourceLimitsCpu: 500m
+  resourceLimitsMemory: 4Gi
+  resourceRequestsCpu: 250m
+  resourceRequestsMemory: 2Gi
+
+two-factor-auth-ui:
+  contacts:
+    primary:
+    - harish.gotour@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  healthEndpoint: /apps/ptb/auth/health
+
+user-profile-service:
+  contacts:
+    primary:
+    - blessen.george@anthem.com
+    dl:
+    - dl-bp_neptune_developers@anthem.com
+  probeInitialDelaySeconds: 120
+  resourceLimitsCpu: 2
+  resourceLimitsMemory: 4Gi
+  resourceRequestsCpu: 1
+  resourceRequestsMemory: 2Gi

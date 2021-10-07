@@ -1,0 +1,50 @@
+---
+- name: Install Kubernetes cluster on docker
+  hosts: all
+  become: yes
+  
+
+  tasks:
+    - name: include vars file
+      include_vars: kind-k8s-cluster-vars.yaml
+
+    - name: Update apt cache
+      apt:
+        state: latest
+        update_cache: yes
+
+    - name: Install go lang
+      apt:
+        name: golang-go
+        state: present
+
+    - name: Download kind binaries
+      get_url: 
+        url: https://kind.sigs.k8s.io/dl/v0.11.0/kind-linux-amd64
+        dest: /usr/local/bin/kind
+        mode: "{{ file_binary_mode }}"
+
+    - name: Create kubernetes docker cluster
+      become: yes
+      become_user: amin
+      shell: 
+        cmd: kind create cluster --name {{ k8s_cluster_name }}
+
+
+    - name: Download kubectl binary
+      get_url:
+        url: "https://storage.googleapis.com/kubernetes-release/release/v{{ kubectl_version }}/bin/{{ kubectl_os }}/{{ kubectl_arch }}/kubectl"
+        dest: "{{ kubectl_tmp_directory }}"
+      tags:
+        - kubectl
+
+    - name: Copy kubectl binary to destination directory
+      copy:
+        src: "{{ kubectl_tmp_directory }}/{{ item }}"
+        dest: "{{ kubectl_bin_directory }}/{{ item }}"
+        mode: "{{ file_binary_mode }}"
+        remote_src: yes
+      with_items:
+        - kubectl
+
+

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+DEVOPS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+docker run --rm -it -v ~/.aws_zcli:/root/.aws -v ~/.kube:/root/.kube -v ${PWD}:/devops zcli:latest "$@"
+

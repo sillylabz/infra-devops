@@ -1,0 +1,16 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: guestbook-ingress
+  namespace: guestbook
+spec:
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - path: /guestbook
+        backend:
+          serviceName: frontend
+          servicePort: 80
+

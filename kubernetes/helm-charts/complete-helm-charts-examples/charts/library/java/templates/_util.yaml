@@ -1,0 +1,33 @@
+_utils.yaml{{- /*
+library-java.util.merge will merge two YAML templates and output the result.
+This takes an array of three values:
+- the top context
+- the template name of the overrides (destination)
+- the template name of the base (source)
+*/ -}}
+{{- define "library-java.util.merge" -}}
+{{- $top := first . -}}
+{{- $overrides := fromYaml (include (index . 1) $top) | default (dict ) -}}
+{{- $tpl := fromYaml (include (index . 2) $top) | default (dict ) -}}
+{{- toYaml (merge $overrides $tpl) -}}
+{{- end -}}
+
+{{- /*
+library-java.util.resolve will merge two YAML templates and output the result.
+This takes an array of three values:
+- the top context
+- the key to lookup
+*/ -}}
+
+{{- define "library-java.util.resolve" -}}
+  {{- with .context }}
+    {{- $releaseName := .Release.Name -}}
+    {{- if hasKey (get .Values $releaseName | default (dict)) $.key }}
+      {{- get (get .Values $releaseName ) $.key -}}
+    {{- else if hasKey (get .Values "java" | default (dict)) $.key }}
+      {{- (get .Values.java $.key ) -}}
+    {{- else}}
+      {{- (get .Values $.key ) -}}
+    {{- end }}
+  {{- end }}
+{{- end }}

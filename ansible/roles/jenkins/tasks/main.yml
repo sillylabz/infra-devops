@@ -1,0 +1,11 @@
+---
+# tasks file for jenkins
+- name: Installing on Ubuntu 
+  include_tasks: ubuntu.yaml
+  when: ansible_os_family == "Ubuntu"
+
+- name: Installing on Linux
+  include_tasks: amazon-linux.yaml
+  when: ansible_os_family == "RedHat"
+
+  

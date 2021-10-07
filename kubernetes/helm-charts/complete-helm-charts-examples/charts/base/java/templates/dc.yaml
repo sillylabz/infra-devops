@@ -1,0 +1,4 @@
+{{- include "library-java.dc" (list . "{{ Release.Name }}.dc") -}}
+{{- define "{{ Release.Name }}.dc" -}}
+{{- end -}}
+deployment

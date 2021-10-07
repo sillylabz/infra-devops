@@ -1,0 +1,30 @@
+apiVersion: enterprise.splunk.com/v1
+kind: Standalone
+metadata:
+  name: splunk-master
+  namespace: splunk-operator
+  finalizers:
+  - enterprise.splunk.com/delete-pvc
+  spec:
+    etcVolumeStorageConfig:
+      ephemeralStorage: true
+      # storageClassName: dynamic-sc
+      # storageCapacity: 15Gi
+    varVolumeStorageConfig:
+      ephemeralStorage: true
+      # storageClassName: dynamic-sc
+      # storageCapacity: 25Gi
+    imagePullPolicy: Always
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "0.1"
+      limits:
+        memory: "8Gi"
+        cpu: "4"
+
+
+
+
+
+

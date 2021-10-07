@@ -1,0 +1,3 @@
+{{- include "library-route.route" (list . "{{ Release.Name }}.route") -}}
+{{- define "{{ Release.Name }}.route" -}}
+{{- end -}}

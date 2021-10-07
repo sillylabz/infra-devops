@@ -1,0 +1,32 @@
+environments:
+  default:
+  dev:
+  qa:
+  uat:
+  prod:
+  dr:
+  blue:
+
+helmDefaults:
+  recreatePods: true
+  historyMax: 10
+  tillerless: true
+  wait: true
+  timeout: 600
+  # createNamespace: false
+
+templates:
+  default: &default
+    namespace: broker-portal-{{`{{ .Environment.Name }}`}}ocp
+    labels:
+      channel: broker-batch
+    missingFileHandler: Warn
+    values:
+    - ../../config/default.yaml
+    - ../../config/environment/{{ .Environment.Name }}.yaml
+
+releases:
+
+- name: appointment-status-polling-batch
+  chart: ../../charts/base/java
+  <<: *default

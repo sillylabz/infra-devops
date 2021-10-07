@@ -1,0 +1,24 @@
+# terraform gitignore
+.terraform
+.terraform.*
+terraform.tfstate
+terraform.tfstate.backup
+terraform.tfvars.*
+*.out
+
+# ignore bash files (not pushing files created when running containers) 
+.bash*
+.viminfo
+kubernetes/**/*.ansible
+kubernetes/**/*.ansible
+
+# Ignoring python cache files
+**/*pycache*
+
+# kubeconfig ignore
+**/velero-kubeconfig
+**/velero-credentials
+**/*kubeconfig*
+**/*credentials*
+
+
