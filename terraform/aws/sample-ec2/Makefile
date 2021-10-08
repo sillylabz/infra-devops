@@ -15,3 +15,10 @@ destroy:
 	terraform destroy -var-file=shared_vars.tfvars -auto-approve 
 
 
+fmt:
+	terraform fmt 
+
+validate:
+	terraform validate
+
+
