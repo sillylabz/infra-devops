@@ -15,6 +15,11 @@ variable "environment" {
   type = string
 }
 
+variable "subnet_filter_tag" {
+  description = "name used to filter subnets used by asg. Options are public, private, and database"
+  type        = string
+}
+
 # elb vars
 variable "asg_elb_listeners" {
   type = list(map(string))
@@ -30,22 +35,16 @@ variable "asg_ssh_key_name" {
   type = string
 }
 
-variable "asg_max" {
-  type    = number
-  default = 3
+variable "min_size" {
 }
 
-variable "asg_min" {
-  type    = number
-  default = 1
+variable "max_size" {
 }
 
-variable "asg_grace" {
-  type    = number
-  default = 300
+variable "desired_capacity" {
 }
 
-variable "asg_health_check_type" {
+variable "health_check_type" {
   type = string
 }
 
