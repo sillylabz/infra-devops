@@ -81,6 +81,7 @@ locals {
     Environment = var.environment
     Project     = var.project_name
   }
+  user_data = file("${path.module}/userdata")
 
 }
 

@@ -148,19 +148,18 @@ module "asg_ec2" {
 
 
   description            = "asg ec2 launch template for ${var.project_name}'s ${var.application_name} instances in ${var.environment}."
+  lt_name                = "${var.project_name}-${var.application_name}-lt-${var.environment}"
+  use_lt    = true
+  create_lt = true
 
-  // lt_name                = "${var.project_name}-${var.application_name}-lt-${var.environment}"
-  // use_lt    = false
-  // create_lt = false
-
-  lc_name   = "${var.project_name}-${var.application_name}-lc-${var.environment}"
-  use_lc    = true
-  create_lc = true
+  // lc_name   = "${var.project_name}-${var.application_name}-lc-${var.environment}"
+  // use_lc    = true
+  // create_lc = true
 
   image_id      = var.asg_ami_id
   instance_type = var.asg_instance_type
   key_name      = var.asg_ssh_key_name
-  // user_data_base64  = base64encode(local.user_data)
+  user_data_base64  = base64encode(local.user_data)
 
   block_device_mappings = var.asg_block_device_mappings
 
