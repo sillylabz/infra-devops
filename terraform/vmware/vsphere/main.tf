@@ -20,14 +20,14 @@ data "vsphere_virtual_machine" "template" {
 }
 
 
-resource "vsphere_virtual_machine" "virt_machine" {
+resource "vsphere_virtual_machine" "virtual_machine" {
   count            = var.vm_count
   name             = "${var.vm_name}0${count.index + 1}"
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
 
   num_cpus = var.vm_cpu
-  memory   = var.vm_ram
+  memory   = var.vm_memory
   guest_id = data.vsphere_virtual_machine.template.guest_id
 
   network_interface {
@@ -47,7 +47,7 @@ resource "vsphere_virtual_machine" "virt_machine" {
     linked_clone  = var.vm_linked_clone
 
     customize {
-      timeout = "20"
+      // timeout = "20"
 
       linux_options {
         host_name = "${var.vm_name}0${count.index + 1}"
