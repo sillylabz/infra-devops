@@ -46,22 +46,28 @@ resource "vsphere_virtual_machine" "virtual_machine" {
     template_uuid = data.vsphere_virtual_machine.template.id
     linked_clone  = var.vm_linked_clone
 
-    customize {
-      // timeout = "20"
+    // customize {
+    //   timeout = "20"
 
-      linux_options {
-        host_name = "${var.vm_name}0${count.index + 1}"
-        domain    = var.vm_domain
+    //   linux_options {
+    //     host_name = "${var.vm_name}0${count.index + 1}"
+    //     domain    = var.vm_domain
 
-      }
+    //   }
 
-      network_interface {
-        ipv4_address = "${var.vm_baseip}${var.vm_ip_suffix + count.index}"
-        ipv4_netmask = var.vm_netmask
-      }
+    //   network_interface {
+    //     ipv4_address = "${var.vm_baseip}${var.vm_ip_suffix + count.index}"
+    //     ipv4_netmask = var.vm_netmask
+    //   }
 
-      ipv4_gateway    = var.vm_gateway
-      dns_server_list = [var.vm_dns]
-    }
+    //   ipv4_gateway    = var.vm_gateway
+    //   dns_server_list = [var.vm_dns]
+    // }
+  }
+  extra_config = {
+    "guestinfo.metadata"          = base64encode(file("${path.module}/templates/metadata.yaml"))
+    "guestinfo.metadata.encoding" = "base64"
+    "guestinfo.userdata"          = base64encode(file("${path.module}/templates/userdata.yaml"))
+    "guestinfo.userdata.encoding" = "base64"
   }
 }
