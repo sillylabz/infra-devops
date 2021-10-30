@@ -76,9 +76,9 @@ variable "vm_gateway" {
   type = string
 }
 
-variable "vm_dns" {
+variable "vm_dns_servers" {
   description = "DNS ip for the vSphere virtual machine"
-  type = string
+  type = list(string)
 }
 
 variable "vm_cpu" {
@@ -88,6 +88,11 @@ variable "vm_cpu" {
 
 variable "vm_memory" {
   description = "Amount of RAM for the vSphere virtual machines (example: 2048)"
+  type = number
+}
+
+variable "vm_disk_size" {
+  description = "vSphere virtual machines disk size in GB (example: 20)"
   type = number
 }
 
