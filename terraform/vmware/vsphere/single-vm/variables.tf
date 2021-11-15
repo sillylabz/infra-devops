@@ -1,6 +1,5 @@
-
 variable "vsphere_server_url" {
-  description = "vSphere derver url"
+  description = "vSphere server url"
 }
 
 variable "vsphere_user" {
