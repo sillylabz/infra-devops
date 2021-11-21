@@ -1,0 +1,102 @@
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: Cluster
+metadata:
+  name: eksa-vcenter
+spec:
+  clusterNetwork:
+    cni: cilium
+    pods:
+      cidrBlocks:
+      - 192.168.0.0/16
+    services:
+      cidrBlocks:
+      - 10.96.0.0/12
+  controlPlaneConfiguration:
+    count: 2
+    endpoint:
+      host: "10.0.0.252"
+    machineGroupRef:
+      kind: VSphereMachineConfig
+      name: eksa-vcenter-cp
+  datacenterRef:
+    kind: VSphereDatacenterConfig
+    name: eksa-vcenter
+  externalEtcdConfiguration:
+    count: 3
+    machineGroupRef:
+      kind: VSphereMachineConfig
+      name: eksa-vcenter-etcd
+  kubernetesVersion: "1.21"
+  workerNodeGroupConfigurations:
+  - count: 3
+    machineGroupRef:
+      kind: VSphereMachineConfig
+      name: eksa-vcenter
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: VSphereDatacenterConfig
+metadata:
+  name: eksa-vcenter
+spec:
+  datacenter: "Datacenter"
+  insecure: true
+  network: "vmPublic"
+  server: "10.0.0.25"
+  thumbprint: ""
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: VSphereMachineConfig
+metadata:
+  name: eksa-vcenter-cp
+spec:
+  datastore: "vmData1"
+  diskGiB: 25
+  folder: "eksa"
+  memoryMiB: 8192
+  numCPUs: 2
+  osFamily: ubuntu
+  resourcePool: "Resources"
+  users:
+  - name: capv
+    sshAuthorizedKeys:
+    - "ssh-rsa AAAAB3NzaC"
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: VSphereMachineConfig
+metadata:
+  name: eksa-vcenter
+spec:
+  datastore: "vmData1"
+  diskGiB: 25
+  folder: "eksa"
+  memoryMiB: 8192
+  numCPUs: 2
+  osFamily: ubuntu
+  resourcePool: "Resources"
+  users:
+  - name: capv
+    sshAuthorizedKeys:
+    - "ssh-rsa AAAAB3NzaC1y"
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: VSphereMachineConfig
+metadata:
+  name: eksa-vcenter-etcd
+spec:
+  datastore: "vmData1"
+  diskGiB: 25
+  folder: "eksa"
+  memoryMiB: 8192
+  numCPUs: 2
+  osFamily: ubuntu
+  resourcePool: "Resources"
+  users:
+  - name: capv
+    sshAuthorizedKeys:
+    - "ssh-rsa AAAAB3NzaC1yc2EAAAADA"
+---
+

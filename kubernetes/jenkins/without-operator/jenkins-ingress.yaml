@@ -8,7 +8,7 @@ metadata:
     kubernetes.io/ingress.class: alb
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
-    alb.ingress.kubernetes.io/tags: Environment=DEV,Cost Center=1410,Owner=Humberto Pombo
+    alb.ingress.kubernetes.io/tags: Environment=DEV,Cost Center=1000,Owner=Sam Thompson
 spec:
   rules:
     - http:

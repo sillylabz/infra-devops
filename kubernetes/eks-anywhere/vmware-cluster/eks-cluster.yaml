@@ -1,0 +1,103 @@
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: Cluster
+metadata:
+  name: prod
+spec:
+  clusterNetwork:
+    cni: cilium
+    pods:
+      cidrBlocks:
+      - 192.168.0.0/16
+    services:
+      cidrBlocks:
+      - 10.96.0.0/12
+  controlPlaneConfiguration:
+    count: 2
+    endpoint:
+      host: "10.0.0.191"
+    machineGroupRef:
+      kind: VSphereMachineConfig
+      name: prod-cp
+  datacenterRef:
+    kind: VSphereDatacenterConfig
+    name: prod
+  externalEtcdConfiguration:
+    count: 3
+    machineGroupRef:
+      kind: VSphereMachineConfig
+      name: prod-etcd
+  kubernetesVersion: "1.21"
+  workerNodeGroupConfigurations:
+  - count: 2
+    machineGroupRef:
+      kind: VSphereMachineConfig
+      name: prod
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: VSphereDatacenterConfig
+metadata:
+  name: prod
+spec:
+  datacenter: "Datacenter"
+  insecure: false
+  network: "vmPublic"
+  server: "lab-vcenter.labz.io"
+  thumbprint: ""
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: VSphereMachineConfig
+metadata:
+  name: prod-cp
+spec:
+  datastore: "vmData1"
+  diskGiB: 100
+  folder: "eksa"
+  memoryMiB: 8192
+  numCPUs: 2
+  osFamily: ubuntu
+  resourcePool: "Resources"
+  users:
+  - name: capv
+    sshAuthorizedKeys:
+    - ""
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: VSphereMachineConfig
+metadata:
+  name: prod
+spec:
+  datastore: "vmData1"
+  diskGiB: 100
+  folder: "eksa"
+  memoryMiB: 8192
+  numCPUs: 2
+  osFamily: ubuntu
+  resourcePool: "Resources"
+  users:
+  - name: capv
+    sshAuthorizedKeys:
+    - ""
+
+---
+apiVersion: anywhere.eks.amazonaws.com/v1alpha1
+kind: VSphereMachineConfig
+metadata:
+  name: prod-etcd
+spec:
+  datastore: "vmData1"
+  diskGiB: 100
+  folder: "eksa"
+  memoryMiB: 8192
+  numCPUs: 2
+  osFamily: ubuntu
+  resourcePool: "Resources"
+  users:
+  - name: capv
+    sshAuthorizedKeys:
+    - ""
+
+---
+

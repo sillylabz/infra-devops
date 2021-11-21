@@ -1,0 +1,54 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prometheus
+  labels:
+    name: prometheus
+---
+apiVersion: v1
+kind: PersistentVolumeClaim        
+metadata:                         
+  name: prometheus-server
+  namespace: prometheus
+  annotations:
+    volume.beta.kubernetes.io/aws-block-storage-additional-resource-tags: ""
+spec:                              
+  storageClassName: ebs-csi-sc
+  accessModes:
+    - ReadWriteOnce                
+  resources:
+    requests:
+      storage: 100Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim        
+metadata:                         
+  name: prometheus-alertmanager
+  namespace: prometheus
+  annotations:
+    volume.beta.kubernetes.io/aws-block-storage-additional-resource-tags: "Environment=QA,Cost Center=1000,Owner=Sam Thompson"
+spec:                              
+  storageClassName: ebs-csi-sc
+  accessModes:
+    - ReadWriteOnce                
+  resources:
+    requests:
+      storage: 20Gi
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim        
+metadata:                         
+  name: prometheus-pushgateway
+  namespace: prometheus
+  annotations:
+    volume.beta.kubernetes.io/aws-block-storage-additional-resource-tags: "Environment=QA,Cost Center=1000,Owner=Sam Thompson"
+spec:                              
+  storageClassName: ebs-csi-sc
+  accessModes:
+    - ReadWriteOnce                
+  resources:
+    requests:
+      storage: 20Gi

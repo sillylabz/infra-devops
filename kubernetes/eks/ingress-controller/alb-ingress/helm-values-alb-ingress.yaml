@@ -180,7 +180,7 @@ extraVolumes:
 defaultTags: 
   Environment: "DEV"
   CostCenter: "1410"
-  Owner: "Humberto Pombo"
+  Owner: "Sam Thomson"
   # default_tag1: value1
   # default_tag2: value2
 
