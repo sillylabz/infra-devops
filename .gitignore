@@ -14,5 +14,9 @@
 **/response.json
 
 
+# eksa binaries
+**/*.tar.gz
+**/eksa-*
+
 
 
