@@ -1,0 +1,13 @@
+#cloud-config
+groups:
+  - docker
+  - ubuntu
+users:
+  - name: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: ubuntu, sudo, docker
+    shell: /bin/bash
+
+packages:
+  - jq
+
