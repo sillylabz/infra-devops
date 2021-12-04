@@ -114,8 +114,15 @@ module "asg_elb" {
   security_groups = [aws_security_group.asg_sg.id]
   internal        = false
 
-  listener     = var.asg_elb_listeners
-  health_check = var.asg_elb_health_check
+  listener = var.asg_elb_listeners
+
+  health_check = {
+    healthy_threshold   = var.elb_healthy_threshold
+    unhealthy_threshold = var.elb_unhealthy_threshold
+    timeout             = var.elb_timeout
+    target              = "TCP:22"
+    interval            = var.elb_interval
+  }
 
   tags = local.tags
 }
@@ -132,32 +139,22 @@ module "asg" {
   desired_capacity          = var.desired_capacity
   wait_for_capacity_timeout = 0
   health_check_type         = var.health_check_type
+  health_check_grace_period = var.asg_grace
   vpc_zone_identifier       = [for s in data.aws_subnet.subnet_lists : s.id]
 
-  initial_lifecycle_hooks = [
-    {
-      name                  = "StartupLifeCycleHook"
-      default_result        = "CONTINUE"
-      heartbeat_timeout     = 120
-      lifecycle_transition  = "autoscaling:EC2_INSTANCE_LAUNCHING"
-      notification_metadata = jsonencode({ "status" = "Instance launching" })
-    },
-    {
-      name                  = "TerminationLifeCycleHook"
-      default_result        = "CONTINUE"
-      heartbeat_timeout     = 180
-      lifecycle_transition  = "autoscaling:EC2_INSTANCE_TERMINATING"
-      notification_metadata = jsonencode({ "status" = "Instance terminating" })
-    }
-  ]
+  // initial_lifecycle_hook =  {
+  //   for_each = var.initial_lifecycle_hooks
+  //   content {
+  //     name                    = initial_lifecycle_hook.value.name
+  //     default_result          = lookup(initial_lifecycle_hook.value, "default_result", null)
+  //     heartbeat_timeout       = lookup(initial_lifecycle_hook.value, "heartbeat_timeout", null)
+  //     lifecycle_transition    = initial_lifecycle_hook.value.lifecycle_transition
+  //     notification_metadata   = lookup(initial_lifecycle_hook.value, "notification_metadata", null)
+  //     notification_target_arn = lookup(initial_lifecycle_hook.value, "notification_target_arn", null)
+  //     role_arn                = lookup(initial_lifecycle_hook.value, "role_arn", null)
+  //   }
+  // }
 
-  instance_refresh = {
-    strategy = "Rolling"
-    preferences = {
-      min_healthy_percentage = 50
-    }
-    triggers = ["tag"]
-  }
 
   # Launch template
   lt_name                = "${var.application_name}-lt-${var.environment}"

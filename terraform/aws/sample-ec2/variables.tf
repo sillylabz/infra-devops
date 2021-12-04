@@ -25,13 +25,25 @@ variable "asg_elb_listeners" {
   type = list(map(string))
 }
 
-variable "asg_elb_health_check" {
-  type = map(string)
+variable "elb_healthy_threshold" {
+}
+
+variable "elb_unhealthy_threshold" {
+}
+
+variable "elb_timeout" {
+}
+
+variable "elb_interval" {
 }
 
 
 # asg vars
 variable "asg_ssh_key_name" {
+  type = string
+}
+
+variable "asg_grace" {
   type = string
 }
 
@@ -59,6 +71,11 @@ variable "asg_instance_type" {
 variable "asg_ami_id" {
   type = string
 }
+
+// variable "initial_lifecycle_hooks" {
+//   type    = list(map(string))
+//   default = []
+// }
 
 variable "asg_block_device_mappings" {
   type = list(any)
