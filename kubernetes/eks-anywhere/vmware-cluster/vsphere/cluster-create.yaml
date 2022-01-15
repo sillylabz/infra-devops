@@ -28,7 +28,7 @@ spec:
       name: eksa-prod-etcd
   kubernetesVersion: "1.21"
   workerNodeGroupConfigurations:
-  - count: 3
+  - count: 5
     machineGroupRef:
       kind: VSphereMachineConfig
       name: eksa-prod
@@ -39,7 +39,7 @@ kind: VSphereDatacenterConfig
 metadata:
   name: eksa-prod
 spec:
-  datacenter: "dc-east-1"
+  datacenter: "dc-east"
   insecure: true
   network: "vmPublic"
   server: "10.0.0.25"
