@@ -14,7 +14,7 @@ spec:
   controlPlaneConfiguration:
     count: 2
     endpoint:
-      host: "10.0.0.191"
+      host: "10.0.0.253"
     machineGroupRef:
       kind: VSphereMachineConfig
       name: prod-cp
@@ -52,7 +52,7 @@ metadata:
   name: prod-cp
 spec:
   datastore: "vmData1"
-  diskGiB: 100
+  diskGiB: 25
   folder: "eksa"
   memoryMiB: 8192
   numCPUs: 2
@@ -70,7 +70,7 @@ metadata:
   name: prod
 spec:
   datastore: "vmData1"
-  diskGiB: 100
+  diskGiB: 25
   folder: "eksa"
   memoryMiB: 8192
   numCPUs: 2
@@ -88,7 +88,7 @@ metadata:
   name: prod-etcd
 spec:
   datastore: "vmData1"
-  diskGiB: 100
+  diskGiB: 25
   folder: "eksa"
   memoryMiB: 8192
   numCPUs: 2

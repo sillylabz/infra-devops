@@ -14,7 +14,7 @@ spec:
   controlPlaneConfiguration:
     count: 2
     endpoint:
-      host: "10.0.0.252"
+      host: "10.0.0.253"
     machineGroupRef:
       kind: VSphereMachineConfig
       name: eksa-prod-cp
