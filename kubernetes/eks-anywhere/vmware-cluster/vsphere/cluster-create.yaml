@@ -28,7 +28,7 @@ spec:
       name: eksa-prod-etcd
   kubernetesVersion: "1.21"
   workerNodeGroupConfigurations:
-  - count: 2
+  - count: 5
     machineGroupRef:
       kind: VSphereMachineConfig
       name: eksa-prod
