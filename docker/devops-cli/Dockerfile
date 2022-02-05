@@ -3,6 +3,7 @@ FROM alpine:3.15
 
 ENV ANSIBLE_VERSION 5.1.0
 ENV TERRAFORM_VER 1.1.2
+ENV TERRAGRUNT_VER v0.36.1
 ENV GLIBC_VER 2.31-r0
 WORKDIR /root
 
@@ -61,9 +62,12 @@ RUN apk --no-cache add \
     # Install terraform
     && curl https://releases.hashicorp.com/terraform/${TERRAFORM_VER}/terraform_${TERRAFORM_VER}_linux_amd64.zip -o terraform_${TERRAFORM_VER}_linux_amd64.zip \ 
     && unzip terraform_${TERRAFORM_VER}_linux_amd64.zip \ 
-    && mv terraform /usr/local/bin/
+    && mv terraform /usr/local/bin/ \
+    # Install terragrunt
+    && wget https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VER}/terragrunt_linux_amd64 -O terragrunt \
+    && chmod +x terragrunt \ 
+    && mv terragrunt /usr/local/bin/
     
-
 # cleanup
 RUN apk del build-dependencies \
         && rm glibc-${GLIBC_VER}.apk \
