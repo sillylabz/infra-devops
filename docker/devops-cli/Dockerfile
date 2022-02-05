@@ -4,6 +4,7 @@ FROM alpine:3.15
 ENV ANSIBLE_VERSION 5.1.0
 ENV TERRAFORM_VER 1.1.2
 ENV GLIBC_VER 2.31-r0
+WORKDIR /root
 
 RUN apk --no-cache add \
         binutils \
@@ -71,5 +72,5 @@ RUN apk del build-dependencies \
         && rm -rf /tmp/*
 
 
-RUN /bin/bash -c "echo \"PS1='\[\033[01;34m\]devops-toolkit:\[\033[00m\]\[\033[01;32m\]\W\[\033[00m\]\[\033[01;34m\]\$\[\033[00m\] '\" >> /root/.bashrc "
+RUN /bin/bash -c "echo \"PS1='\[\033[01;34m\]/root:\[\033[00m\]\[\033[01;32m\]\W\[\033[00m\]\[\033[01;34m\]\$\[\033[00m\] '\" >> /root/.bashrc "
 
