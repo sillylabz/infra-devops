@@ -10,7 +10,8 @@ WORKDIR /root
 RUN apk --no-cache add \
         binutils \
         sudo \
-        python3\
+        python3 \
+        make \
         py3-pip \
         openssl \
         ca-certificates \
