@@ -12,6 +12,7 @@
 **/terraform.rc
 **/hello-world.zip
 **/response.json
+**/.vagrant*
 
 
 # eksa binaries
