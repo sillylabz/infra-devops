@@ -1,6 +1,6 @@
 
 variable "vpc_id" {
-  type = string
+  type    = string
   default = "vpc-xxxxxxx"
 }
 
@@ -25,6 +25,10 @@ variable "owner" {
 }
 
 variable "cost_center" {
+  type = string
+}
+
+variable "operating_system" {
   type = string
 }
 

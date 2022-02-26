@@ -72,8 +72,32 @@ locals {
     Environment   = var.environment
     Project       = var.project_name
     Owner         = var.owner
-    CostCenter = var.cost_center
+    "Cost Center" = var.cost_center
   }
+
+  asg_instance_tags = [
+    {
+      key                 = "Environment"
+      value               = var.environment
+      propagate_at_launch = true
+    },
+    {
+      key                 = "Owner"
+      value               = var.owner
+      propagate_at_launch = true
+    },
+    {
+      key                 = "Cost Center"
+      value               = var.cost_center
+      propagate_at_launch = true
+    },
+    {
+      key                 = "Operating System"
+      value               = var.operating_system
+      propagate_at_launch = true
+    },
+  ]
+
   user_data = file("${path.module}/userdata")
 
 }
