@@ -142,18 +142,20 @@ module "asg" {
   health_check_grace_period = var.asg_grace
   vpc_zone_identifier       = [for s in data.aws_subnet.subnet_lists : s.id]
 
-  initial_lifecycle_hook =  {
-    for_each = var.asg_initial_lifecycle_hooks
-    content {
-      name                    = initial_lifecycle_hook.value.name
-      default_result          = lookup(initial_lifecycle_hook.value, "default_result", null)
-      heartbeat_timeout       = lookup(initial_lifecycle_hook.value, "heartbeat_timeout", null)
-      lifecycle_transition    = initial_lifecycle_hook.value.lifecycle_transition
-      notification_metadata   = lookup(initial_lifecycle_hook.value, "notification_metadata", null)
-      notification_target_arn = lookup(initial_lifecycle_hook.value, "notification_target_arn", null)
-      role_arn                = lookup(initial_lifecycle_hook.value, "role_arn", null)
-    }
-  }
+  initial_lifecycle_hooks = var.asg_initial_lifecycle_hooks
+
+  // initial_lifecycle_hook {
+  //   for_each = var.asg_initial_lifecycle_hooks
+  //   content {
+  //     name                    = initial_lifecycle_hook.value.name
+  //     default_result          = lookup(initial_lifecycle_hook.value, "default_result", null)
+  //     heartbeat_timeout       = lookup(initial_lifecycle_hook.value, "heartbeat_timeout", null)
+  //     lifecycle_transition    = initial_lifecycle_hook.value.lifecycle_transition
+  //     notification_metadata   = lookup(initial_lifecycle_hook.value, "notification_metadata", null)
+  //     notification_target_arn = lookup(initial_lifecycle_hook.value, "notification_target_arn", null)
+  //     role_arn                = lookup(initial_lifecycle_hook.value, "role_arn", null)
+  //   }
+  // }
 
 
   # Launch template
