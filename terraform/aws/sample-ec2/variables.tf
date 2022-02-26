@@ -15,6 +15,14 @@ variable "environment" {
   type = string
 }
 
+variable "owner" {
+  type = string
+}
+
+variable "cost_center" {
+  type = string
+}
+
 variable "subnet_filter_tag" {
   description = "name used to filter subnets used by asg. Options are public, private, and database"
   type        = string
@@ -72,10 +80,10 @@ variable "asg_ami_id" {
   type = string
 }
 
-// variable "initial_lifecycle_hooks" {
-//   type    = list(map(string))
-//   default = []
-// }
+variable "asg_initial_lifecycle_hooks" {
+  type    = list(map(string))
+  default = []
+}
 
 variable "asg_block_device_mappings" {
   type = list(any)

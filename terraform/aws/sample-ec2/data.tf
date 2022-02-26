@@ -55,6 +55,8 @@ locals {
   tags = {
     Environment = var.environment
     Project     = var.project_name
+    Owner = var.owner
+    Cost Center = var.cost_center
   }
   user_data = file("${path.module}/userdata")
 
