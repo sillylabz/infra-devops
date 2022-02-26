@@ -3,11 +3,18 @@ data "aws_region" "current" {}
 
 data "aws_availability_zones" "available" {}
 
+
+// data "aws_vpc" "selected" {
+//   filter {
+//     name   = "tag:Name"
+//     values = ["${var.project_name}-vpc-${var.environment}"]
+//   }
+// }
+
+
+# bring your own vpc. 
 data "aws_vpc" "selected" {
-  filter {
-    name   = "tag:Name"
-    values = ["${var.project_name}-vpc-${var.environment}"]
-  }
+  id = var.vpc_id
 }
 
 data "aws_subnet_ids" "all" {
@@ -19,11 +26,20 @@ data "aws_subnet" "subnet_all_lists" {
   id       = each.value
 }
 
+// data "aws_subnet_ids" "subnets" {
+//   vpc_id = data.aws_vpc.selected.id
+//   filter {
+//     name   = "tag:Name"
+//     values = ["${var.project_name}-${var.subnet_filter_tag}-${var.environment}"]
+//   }
+// }
+
+# bring your own subnets. 
 data "aws_subnet_ids" "subnets" {
   vpc_id = data.aws_vpc.selected.id
   filter {
     name   = "tag:Name"
-    values = ["${var.project_name}-${var.subnet_filter_tag}-${var.environment}"]
+    values = var.private_subnets_tag
   }
 }
 
@@ -53,9 +69,35 @@ locals {
   ]
 
   tags = {
-    Environment = var.environment
-    Project     = var.project_name
+    Environment   = var.environment
+    Project       = var.project_name
+    Owner         = var.owner
+    "Cost Center" = var.cost_center
   }
+
+  asg_instance_tags = [
+    {
+      key                 = "Environment"
+      value               = var.environment
+      propagate_at_launch = true
+    },
+    {
+      key                 = "Owner"
+      value               = var.owner
+      propagate_at_launch = true
+    },
+    {
+      key                 = "Cost Center"
+      value               = var.cost_center
+      propagate_at_launch = true
+    },
+    {
+      key                 = "Operating System"
+      value               = var.operating_system
+      propagate_at_launch = true
+    },
+  ]
+
   user_data = file("${path.module}/userdata")
 
 }

@@ -1,4 +1,9 @@
 
+variable "vpc_id" {
+  type    = string
+  default = "vpc-xxxxxxx"
+}
+
 variable "aws_region" {
   type = string
 }
@@ -15,9 +20,27 @@ variable "environment" {
   type = string
 }
 
-variable "subnet_filter_tag" {
-  description = "name used to filter subnets used by asg. Options are public, private, and database"
-  type        = string
+variable "owner" {
+  type = string
+}
+
+variable "cost_center" {
+  type = string
+}
+
+variable "operating_system" {
+  type = string
+}
+
+// variable "subnet_filter_tag" {
+//   description = "name used to filter subnets used by asg. Options are public, private, and database"
+//   type        = string
+// }
+
+# bring your own subnets
+variable "private_subnets_tag" {
+  description = "subnet name tag filter for asg instances"
+  type        = list(string)
 }
 
 # elb vars
@@ -72,10 +95,10 @@ variable "asg_ami_id" {
   type = string
 }
 
-// variable "initial_lifecycle_hooks" {
-//   type    = list(map(string))
-//   default = []
-// }
+variable "asg_initial_lifecycle_hooks" {
+  type    = list(map(string))
+  default = []
+}
 
 variable "asg_block_device_mappings" {
   type = list(any)

@@ -108,6 +108,7 @@ module "s3_logging_bucket" {
 
 module "asg_elb" {
   source = "terraform-aws-modules/elb/aws"
+  version = "3.0.1"
   name   = "${var.application_name}-elb-${var.environment}-${random_id.asg_random.hex}"
 
   subnets         = [for s in data.aws_subnet.subnet_lists : s.id]
@@ -127,49 +128,39 @@ module "asg_elb" {
   tags = local.tags
 }
 
+
 module "asg" {
   source  = "terraform-aws-modules/autoscaling/aws"
-  version = "~> 4.0"
+  version = "5.1.1"
 
   # Autoscaling group
-  name = "${var.application_name}-asg-${var.environment}"
+  name = "${var.application_name}-asg-${var.environment}-${random_id.asg_random.hex}"
 
   min_size                  = var.min_size
   max_size                  = var.max_size
   desired_capacity          = var.desired_capacity
   wait_for_capacity_timeout = 0
-  health_check_type         = var.health_check_type
   health_check_grace_period = var.asg_grace
   vpc_zone_identifier       = [for s in data.aws_subnet.subnet_lists : s.id]
 
-  // initial_lifecycle_hook =  {
-  //   for_each = var.initial_lifecycle_hooks
-  //   content {
-  //     name                    = initial_lifecycle_hook.value.name
-  //     default_result          = lookup(initial_lifecycle_hook.value, "default_result", null)
-  //     heartbeat_timeout       = lookup(initial_lifecycle_hook.value, "heartbeat_timeout", null)
-  //     lifecycle_transition    = initial_lifecycle_hook.value.lifecycle_transition
-  //     notification_metadata   = lookup(initial_lifecycle_hook.value, "notification_metadata", null)
-  //     notification_target_arn = lookup(initial_lifecycle_hook.value, "notification_target_arn", null)
-  //     role_arn                = lookup(initial_lifecycle_hook.value, "role_arn", null)
-  //   }
-  // }
+  initial_lifecycle_hooks = var.asg_initial_lifecycle_hooks
 
+  load_balancers = [module.asg_elb.elb_name]
 
   # Launch template
-  lt_name                = "${var.application_name}-lt-${var.environment}"
-  description            = "asg ec2 launch template for ${var.project_name}'s ${var.application_name} instances in ${var.environment}."
-  update_default_version = true
+  create_launch_template      = true
+  launch_template_name        = "${var.application_name}-lt-${var.environment}-${random_id.asg_random.hex}"
+  launch_template_description = "asg ec2 launch template for ${var.project_name}'s ${var.application_name} instances in ${var.environment}."
+  update_default_version      = true
 
-  use_lt    = true
-  create_lt = true
+  security_groups = [aws_security_group.asg_sg.id]
 
   image_id          = var.asg_ami_id
   instance_type     = var.asg_instance_type
   key_name          = var.asg_ssh_key_name
   user_data_base64  = base64encode(local.user_data)
   ebs_optimized     = true
-  enable_monitoring = false
+  enable_monitoring = true
 
   block_device_mappings = var.asg_block_device_mappings
 
@@ -190,7 +181,8 @@ module "asg" {
     }
   ]
 
-  tags = local.asg_tags
+  tags = local.tags
+  // tags_as_map = local.tags
 
 }
 
