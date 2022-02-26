@@ -11,7 +11,7 @@ services:
   #     NGROK_AUTH: 1QLHjKxOEARPFzRgZSsAbAmuo45_5EZUh1F4DCv8tP27NzoB9
   #     NGROK_DEBUG: "true"
   jenkins:
-      image: jenkins/jenkins:2.277.4-lts
+      image: jenkins/jenkins:2.335-jdk11
       networks: 
         - cicd-network
       mem_limit: 1000m
@@ -27,7 +27,7 @@ services:
           mode: host
       container_name: jenkins
       volumes:
-        - /Users/admin/docker-data/jenkins:/var/jenkins_home
+        # - /Users/admin/docker-data/jenkins:/var/jenkins_home
         - /var/run/docker.sock:/var/run/docker.sock
       environment:
         - JAVA_OPTS=-Xms512m -Xmx2g -Djava.awt.headless=true

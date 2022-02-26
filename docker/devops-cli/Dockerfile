@@ -10,7 +10,8 @@ WORKDIR /root
 RUN apk --no-cache add \
         binutils \
         sudo \
-        python3\
+        python3 \
+        make \
         py3-pip \
         openssl \
         ca-certificates \
@@ -22,6 +23,7 @@ RUN apk --no-cache add \
         unzip \
         jq \
         git \
+        groff \
         # install glibc compatibility for the AWS CLI v2 and the CLI
         && curl -sL https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub \
         && curl -sLO https://github.com/sgerrand/alpine-pkg-glibc/releases/download/${GLIBC_VER}/glibc-${GLIBC_VER}.apk \
