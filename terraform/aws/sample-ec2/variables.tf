@@ -38,17 +38,6 @@ variable "operating_system" {
 // }
 
 # bring your own subnets
-variable "ansible_inventory_file" {
-  description = "ansible inventory file"
-  type        = string
-}
-
-variable "ansible_playbook_file" {
-  description = "ansible playbook file"
-  type        = string
-}
-
-# bring your own subnets
 variable "private_subnets_tag" {
   description = "subnet name tag filter for asg instances"
   type        = list(string)
