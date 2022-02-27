@@ -107,9 +107,9 @@ module "s3_logging_bucket" {
 
 
 module "asg_elb" {
-  source = "terraform-aws-modules/elb/aws"
+  source  = "terraform-aws-modules/elb/aws"
   version = "3.0.1"
-  name   = "${var.application_name}-elb-${var.environment}-${random_id.asg_random.hex}"
+  name    = "${var.application_name}-elb-${var.environment}-${random_id.asg_random.hex}"
 
   subnets         = [for s in data.aws_subnet.subnet_lists : s.id]
   security_groups = [aws_security_group.asg_sg.id]
@@ -185,5 +185,4 @@ module "asg" {
   // tags_as_map = local.tags
 
 }
-
 
