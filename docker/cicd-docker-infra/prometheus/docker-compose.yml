@@ -6,7 +6,9 @@ volumes:
 
 networks:
   front-tier:
+    driver: bridge
   back-tier:
+    driver: bridge
 
 services:
 
@@ -73,14 +75,16 @@ services:
 #        constraints:
 #          - node.hostname == ${HOSTNAME}
   cadvisor:
-    image: google/cadvisor
+    image: gcr.io/cadvisor/cadvisor:v0.36.0
+    privileged: true 
     volumes:
       - /:/rootfs:ro
-      - /var/run:/var/run:rw
+      - /var/run:/var/run:ro
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk1:/dev/disk:ro
     ports:
-      - 8080:8080
+      - 8090:8080
     networks:
       - back-tier
     restart: always
