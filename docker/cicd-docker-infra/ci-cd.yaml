@@ -1,34 +1,27 @@
 version: '3.9'
+
+# container networking
+networks:
+  cicd-network: 
+    name: cicd-network
+
 services:
-  # ngrok: 
-  #   image: wernight/ngrok
-  #   container_name: ngrok-jenkins
-  #   command: ngrok http http://192.168.1.141:8081
-  #   # port for ngrok ui
-  #   ports:
-  #     - 4040:4040
-  #   environment: 
-  #     NGROK_AUTH: 1QLHjKxOEARPFzRgZSsAbAmuo45_5EZUh1F4DCv8tP27NzoB9
-  #     NGROK_DEBUG: "true"
   jenkins:
       image: jenkins/jenkins:2.335-jdk11
       networks: 
         - cicd-network
-      mem_limit: 1000m
-      mem_reservation: 128M
-      cpus: 0.5
       privileged: true
       user: root
       restart: unless-stopped
       ports:
         - target: 8080
-          published: 8080
+          published: 8083
           protocol: tcp
           mode: host
       container_name: jenkins
-      volumes:
-        # - /Users/admin/docker-data/jenkins:/var/jenkins_home
-        - /var/run/docker.sock:/var/run/docker.sock
+      # volumes:
+      #   # - /Users/admin/docker-data/jenkins:/var/jenkins_home
+      #   - /var/run/docker.sock:/var/run/docker.sock
       environment:
         - JAVA_OPTS=-Xms512m -Xmx2g -Djava.awt.headless=true
 
@@ -38,9 +31,6 @@ services:
       networks: 
         - cicd-network
       container_name: sonarqube
-      # mem_limit: 2000m
-      # mem_reservation: 128M
-      # cpus: 0.5
       # depends_on:
       #   - sonarqube-db
       # links:
@@ -49,13 +39,16 @@ services:
       #   SONAR_JDBC_URL: jdbc:postgresql://sonarqube-db:5432/sonar
       #   SONAR_JDBC_USERNAME: sonar
       #   SONAR_JDBC_PASSWORD: sonar
-      volumes:
-        - /Users/admin/docker-data/sonarqube/data:/opt/sonarqube/data
-        - /Users/admin/docker-data/sonarqube/extensions:/opt/sonarqube/extensions
-        - /Users/admin/docker-data/sonarqube/logs:/opt/sonarqube/logs
-        - /Users/admin/docker-data/sonarqube/temp:/opt/sonarqube/temp
+      # volumes:
+      #   - /Users/admin/docker-data/sonarqube/data:/opt/sonarqube/data
+      #   - /Users/admin/docker-data/sonarqube/extensions:/opt/sonarqube/extensions
+      #   - /Users/admin/docker-data/sonarqube/logs:/opt/sonarqube/logs
+      #   - /Users/admin/docker-data/sonarqube/temp:/opt/sonarqube/temp
       ports:
-        - "8082:9000"
+        - target: 9000
+          published: 8084
+          protocol: tcp
+          mode: host
       restart: always
 
   # sonarqube-db:
@@ -88,15 +81,15 @@ services:
   artifactory:
     image: docker.bintray.io/jfrog/artifactory-oss:6.23.13
     container_name: artifactory
-    # mem_limit: 2000M
-    # mem_reservation: 512M
-    # cpus: 0.5
     networks: 
       - cicd-network
     ports:
-     - 8083:8081
-    volumes:
-     - /Users/admin/docker-data/artifactory:/var/opt/jfrog/artifactory
+    - target: 8081
+      published: 8085
+      protocol: tcp
+      mode: host
+    # volumes:
+    #  - /Users/admin/docker-data/artifactory:/var/opt/jfrog/artifactory
 #    Add extra Java options by uncommenting the following lines
 #    environment:
 #     - EXTRA_JAVA_OPTIONS=-Xms512m -Xmx4g
@@ -108,29 +101,7 @@ services:
         hard: 40000
 
 
-  # # nginx server
-  # nginx:
-  #   image: nginx:latest
-  #   container_name: nginx
-  #   ports:
-  #     - '8080:80'
-  #     #- '8443:443'
-  #   volumes: 
-  #     - ./nginx.conf:/etc/nginx/nginx.conf
-  #     - /home/amin/Documents/dev-projects/infra-devops/nginx/apps-configs:/etc/nginx/conf.d/apps-configs
-  #     - /home/amin/Documents/dev-projects/auth/certs/ci-cd:/etc/nginx/conf.d/ssl
-  #   restart: always
-  #   networks: 
-  #     - cicd-network
-  #   extra_hosts:
-  #     # - "host.docker.internal:172.17.0.1"
-  #     - "host.docker.internal:host-gateway"
 
-  #   environment:
 
-# container networking
-networks:
-  cicd-network: 
-    name: cicd-network
 
 
