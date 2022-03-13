@@ -1,7 +1,7 @@
 apiVersion: anywhere.eks.amazonaws.com/v1alpha1
 kind: Cluster
 metadata:
-  name: eksa-prod
+  name: sandbox-eksa
 spec:
   clusterNetwork:
     cni: cilium
@@ -17,27 +17,27 @@ spec:
       host: "10.0.0.253"
     machineGroupRef:
       kind: VSphereMachineConfig
-      name: eksa-prod-cp
+      name: sandbox-eksa-cp
   datacenterRef:
     kind: VSphereDatacenterConfig
-    name: eksa-prod
+    name: sandbox-eksa
   externalEtcdConfiguration:
     count: 3
     machineGroupRef:
       kind: VSphereMachineConfig
-      name: eksa-prod-etcd
+      name: sandbox-eksa-etcd
   kubernetesVersion: "1.21"
   workerNodeGroupConfigurations:
   - count: 5
     machineGroupRef:
       kind: VSphereMachineConfig
-      name: eksa-prod
+      name: sandbox-eksa
 
 ---
 apiVersion: anywhere.eks.amazonaws.com/v1alpha1
 kind: VSphereDatacenterConfig
 metadata:
-  name: eksa-prod
+  name: sandbox-eksa
 spec:
   datacenter: "dc-east"
   insecure: true
@@ -49,10 +49,10 @@ spec:
 apiVersion: anywhere.eks.amazonaws.com/v1alpha1
 kind: VSphereMachineConfig
 metadata:
-  name: eksa-prod-cp
+  name: sandbox-eksa-cp
 spec:
   datastore: "vmData1"
-  diskGiB: 25
+  diskGiB: 100
   folder: "eksa"
   memoryMiB: 8192
   numCPUs: 2
@@ -67,10 +67,10 @@ spec:
 apiVersion: anywhere.eks.amazonaws.com/v1alpha1
 kind: VSphereMachineConfig
 metadata:
-  name: eksa-prod
+  name: sandbox-eksa
 spec:
   datastore: "vmData1"
-  diskGiB: 25
+  diskGiB: 100
   folder: "eksa"
   memoryMiB: 8192
   numCPUs: 2
@@ -85,10 +85,10 @@ spec:
 apiVersion: anywhere.eks.amazonaws.com/v1alpha1
 kind: VSphereMachineConfig
 metadata:
-  name: eksa-prod-etcd
+  name: sandbox-eksa-etcd
 spec:
   datastore: "vmData1"
-  diskGiB: 25
+  diskGiB: 100
   folder: "eksa"
   memoryMiB: 8192
   numCPUs: 2
