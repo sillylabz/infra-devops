@@ -29,8 +29,13 @@ variable "vm_name" {
 //   type = number
 // }
 
-variable "vm_datastore" {
-  description = "Datastore used for the vSphere virtual machines"
+// variable "vm_datastore" {
+//   description = "Datastore used for the vSphere virtual machines"
+//   type = string
+// }
+
+variable "vm_datastore_cluster" {
+  description = "Datastore cluster used for the vSphere virtual machines"
   type = string
 }
 
