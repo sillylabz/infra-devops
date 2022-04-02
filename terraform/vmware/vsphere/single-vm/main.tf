@@ -7,15 +7,15 @@ data "vsphere_compute_cluster" "cluster" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-// data "vsphere_datastore" "datastore" {
-//   name          = var.vm_datastore
-//   datacenter_id = data.vsphere_datacenter.dc.id
-// }
-
-data "vsphere_datastore_cluster" "datastore_cluster" {
-  name          = var.vm_datastore_cluster
+data "vsphere_datastore" "datastore" {
+  name          = var.vm_datastore
   datacenter_id = data.vsphere_datacenter.dc.id
 }
+
+// data "vsphere_datastore_cluster" "datastore_cluster" {
+//   name          = var.vm_datastore_cluster
+//   datacenter_id = data.vsphere_datacenter.dc.id
+// }
 
 data "vsphere_network" "network" {
   name          = var.vm_network
