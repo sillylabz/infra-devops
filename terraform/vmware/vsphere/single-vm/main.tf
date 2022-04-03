@@ -34,8 +34,8 @@ resource "vsphere_virtual_machine" "virtual_machine" {
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
   firmware = "efi"
-  wait_for_guest_net_timeout = 10
-  wait_for_guest_ip_timeout = 10
+  wait_for_guest_net_timeout = 5
+  wait_for_guest_ip_timeout = 5
   efi_secure_boot_enabled = false
 
   num_cpus = var.vm_cpu
