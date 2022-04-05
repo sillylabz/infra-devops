@@ -21,5 +21,7 @@
 **/*.tar.gz
 **/eksa-*
 
-
+# bash binaries
+**/.ash_history
+**/.bash_history
 

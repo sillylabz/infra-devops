@@ -5,6 +5,8 @@ ENV ANSIBLE_VERSION 5.1.0
 ENV TERRAFORM_VER 1.1.2
 ENV TERRAGRUNT_VER v0.36.1
 ENV GLIBC_VER 2.31-r0
+ENV EKSA_RELEASE 0.8.0
+ENV RELEASE_NUMBER 8
 WORKDIR /root
 
 RUN apk --no-cache add \
@@ -68,8 +70,14 @@ RUN apk --no-cache add \
     # Install terragrunt
     && wget https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VER}/terragrunt_linux_amd64 -O terragrunt \
     && chmod +x terragrunt \ 
-    && mv terragrunt /usr/local/bin/
-    
+    && mv terragrunt /usr/local/bin/ \
+    # Install eksctl anywhere
+    && export OS="$(uname -s | tr A-Z a-z)" \
+    && curl "https://anywhere-assets.eks.amazonaws.com/releases/eks-a/${RELEASE_NUMBER}/artifacts/eks-a/v${EKSA_RELEASE}/${OS}/amd64/eksctl-anywhere-v${EKSA_RELEASE}-${OS}-amd64.tar.gz" \
+        --silent --location \
+        | tar xz ./eksctl-anywhere \
+    && sudo mv ./eksctl-anywhere /usr/local/bin/
+
 # cleanup
 RUN apk del build-dependencies \
         && rm glibc-${GLIBC_VER}.apk \
