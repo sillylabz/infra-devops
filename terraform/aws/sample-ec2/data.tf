@@ -14,7 +14,10 @@ data "aws_availability_zones" "available" {}
 
 # bring your own vpc. 
 data "aws_vpc" "selected" {
-  id = var.vpc_id
+  filter {
+    name   = "tag:Name"
+    values = ["${var.project_name}*"]
+  }
 }
 
 data "aws_subnet_ids" "all" {
@@ -39,7 +42,7 @@ data "aws_subnet_ids" "subnets" {
   vpc_id = data.aws_vpc.selected.id
   filter {
     name   = "tag:Name"
-    values = var.private_subnets_tag
+    values = ["${var.project_name}-private*"]
   }
 }
 
