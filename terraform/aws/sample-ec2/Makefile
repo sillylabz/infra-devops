@@ -1,6 +1,6 @@
 
 init:
-	terraform init 
+	terraform init -reconfigure
 
 
 plan:

@@ -7,14 +7,14 @@ variable "subnet_cidrs" {
 }
 
 variable "project_name" {
-  type        = string
+  type = string
 }
 
 variable "owner" {
-  type        = string
+  type = string
 }
 
 variable "environment" {
-  type        = string
+  type = string
 }
 

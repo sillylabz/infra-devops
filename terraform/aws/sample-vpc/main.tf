@@ -11,41 +11,57 @@ locals {
   tags = {
     Environment = var.environment
     Project     = var.project_name
-    Owner = var.owner
+    Owner       = var.owner
   }
 }
 
 
 module "vpc" {
-  source = "terraform-aws-modules/vpc/aws"
+  source  = "terraform-aws-modules/vpc/aws"
   version = "3.7.0"
 
   name = local.name
   cidr = var.vpc_cidr
 
-  azs             = ["${var.aws_region}a", "${var.aws_region}b", "${var.aws_region}c"]
-  private_subnets = [var.subnet_cidrs["private1"], var.subnet_cidrs["private2"], var.subnet_cidrs["private3"]]
+  azs = [
+    "${var.aws_region}a",
+    "${var.aws_region}b",
+    "${var.aws_region}c"
+  ]
+  private_subnets = [
+    var.subnet_cidrs["private1"],
+    var.subnet_cidrs["private2"],
+    var.subnet_cidrs["private3"]
+  ]
   private_subnet_tags = merge(
     local.tags,
     {
       Name = "${var.project_name}-private-${var.environment}"
     }
   )
-  public_subnets = [var.subnet_cidrs["public1"], var.subnet_cidrs["public2"], var.subnet_cidrs["public3"]]
+  public_subnets = [
+    var.subnet_cidrs["public1"],
+    var.subnet_cidrs["public2"],
+    var.subnet_cidrs["public3"]
+  ]
   public_subnet_tags = merge(
     local.tags,
     {
       Name = "${var.project_name}-public-${var.environment}"
     }
   )
-  database_subnets = [var.subnet_cidrs["database1"], var.subnet_cidrs["database2"], var.subnet_cidrs["database3"]]
+  database_subnets = [
+    var.subnet_cidrs["database1"],
+    var.subnet_cidrs["database2"],
+    var.subnet_cidrs["database3"]
+  ]
   database_subnet_tags = merge(
     local.tags,
     {
       Name = "${var.project_name}-database-${var.environment}"
     }
   )
-  create_database_subnet_group = false
+  create_database_subnet_group = true
 
   manage_default_route_table = true
   default_route_table_tags   = { DefaultRouteTable = true }
