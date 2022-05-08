@@ -19,7 +19,7 @@
 
 # eksa binaries
 **/*.tar.gz
-**/eksa-*
-
+**/*eksa*
+**/*id_rsa
 
 

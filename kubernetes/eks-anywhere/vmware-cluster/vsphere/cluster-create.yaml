@@ -42,7 +42,7 @@ spec:
   datacenter: "dc-east"
   insecure: true
   network: "vmPublic"
-  server: "10.0.0.25"
+  server: "10.0.0.31"
   thumbprint: ""
 
 ---
