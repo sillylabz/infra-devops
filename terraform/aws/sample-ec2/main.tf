@@ -134,7 +134,7 @@ module "asg" {
   version = "5.1.1"
 
   # Autoscaling group
-  name = "${var.application_name}-asg-${var.environment}-${random_id.asg_random.hex}"
+  name = "${var.project_name}-${var.application_name}-${var.environment}-${random_id.asg_random.hex}"
 
   min_size                  = var.min_size
   max_size                  = var.max_size

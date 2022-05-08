@@ -51,7 +51,7 @@ kind: VSphereMachineConfig
 metadata:
   name: sandbox-eksa-cp
 spec:
-  datastore: "vmData1"
+  datastore: "vmData"
   diskGiB: 100
   folder: "eksa"
   memoryMiB: 8192
@@ -69,7 +69,7 @@ kind: VSphereMachineConfig
 metadata:
   name: sandbox-eksa
 spec:
-  datastore: "vmData1"
+  datastore: "vmData"
   diskGiB: 100
   folder: "eksa"
   memoryMiB: 8192
@@ -87,7 +87,7 @@ kind: VSphereMachineConfig
 metadata:
   name: sandbox-eksa-etcd
 spec:
-  datastore: "vmData1"
+  datastore: "vmData"
   diskGiB: 100
   folder: "eksa"
   memoryMiB: 8192

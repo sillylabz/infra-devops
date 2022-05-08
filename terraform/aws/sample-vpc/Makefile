@@ -2,7 +2,7 @@ get-identity:
 	aws sts get-caller-identity
 
 init:
-	terraform init -upgrade
+	terraform init -reconfigure
 
 state-list:
 	terraform state list

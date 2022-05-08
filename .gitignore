@@ -19,7 +19,9 @@
 
 # eksa binaries
 **/*.tar.gz
-**/*eksa*
-**/*id_rsa
+**/eksa-*
 
+# bash binaries
+**/.ash_history
+**/.bash_history
 
