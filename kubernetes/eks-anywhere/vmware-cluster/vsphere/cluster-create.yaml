@@ -12,7 +12,7 @@ spec:
       cidrBlocks:
       - 10.96.0.0/12
   controlPlaneConfiguration:
-    count: 2
+    count: 3
     endpoint:
       host: "10.0.0.253"
     machineGroupRef:
@@ -28,7 +28,8 @@ spec:
       name: sandbox-eksa-etcd
   kubernetesVersion: "1.21"
   workerNodeGroupConfigurations:
-  - count: 5
+  - count: 9
+
     machineGroupRef:
       kind: VSphereMachineConfig
       name: sandbox-eksa
