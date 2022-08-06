@@ -70,6 +70,7 @@ resource "vsphere_virtual_machine" "virtual_machine" {
         ipv4_address = "${var.vm_baseip}.${var.vm_ip_suffix}"
         ipv4_netmask = var.vm_netmask
       }
+
       ipv4_gateway    = var.vm_gateway
       dns_server_list = var.vm_dns_servers
     }

@@ -24,4 +24,5 @@
 # bash binaries
 **/.ash_history
 **/.bash_history
+**/*.env
 
