@@ -52,7 +52,8 @@ RUN apk --no-cache add \
     pip3 install --upgrade pip cffi && \
     pip3 install ansible==${ANSIBLE_VERSION} && \
     pip3 install mitogen ansible-lint jmespath && \
-    pip3 install --upgrade pywinrm \
+    pip3 install --upgrade pywinrm && \
+    pip3 install --upgrade pyvmomi \
     # Install eksctl (The official CLI for Amazon EKS)
     && curl -sL "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp \
     && mv /tmp/eksctl /usr/local/bin \

@@ -1,5 +1,3 @@
-local-hostname: sample01
-instance-id: sample01
 network:
   version: 2
   ethernets:
@@ -10,6 +8,7 @@ network:
       gateway4: 10.0.0.1
       nameservers:
         addresses:
-          - 10.0.0.24
+          - 8.8.8.8
+          - 8.8.4.4
 
 

@@ -1,0 +1,9 @@
+packages:
+  - python3-pip #Dependency package for cur
+  - nfs-kernel-server
+  - docker
+  - docker.io
+  - jq
+  - yq
+
+
