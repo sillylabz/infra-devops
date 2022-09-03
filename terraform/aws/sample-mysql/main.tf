@@ -35,7 +35,7 @@ resource "aws_security_group" "rds_sg" {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
-    cidr_blocks = ["73.128.10.169/32"]
+    cidr_blocks = var.additonal_sg_cidrs
   }
 
   egress {
