@@ -1,0 +1,11 @@
+users:
+  - default
+  - name: devops
+    gecos: devops user
+    lock_passwd: false
+    passwd: $6$9VjhePobJ$c8ilrmLkxqHREesehGJEU1mKplHmdqiC/2zc3ita1BFWeWtDJQUNwdPEIgv2qJc5VpdoSj34kdARDfqHlQbzx1
+    sudo:  ALL=(ALL) NOPASSWD:ALL
+
+
+
+

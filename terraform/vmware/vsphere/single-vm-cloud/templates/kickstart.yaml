@@ -1,0 +1,19 @@
+#cloud-config
+
+write_files:
+  - path: /etc/netplan/10-user-network.yaml
+    content: | 
+      network:
+        version: 2
+        ethernets:
+          ens192:
+            dhcp4: false
+            addresses:
+            - 10.0.0.89/24
+            gateway4: 10.0.0.1
+            nameservers:
+              addresses:
+              - 8.8.8.8
+              - 8.8.4.4
+runcmd:
+  - sudo netplan apply

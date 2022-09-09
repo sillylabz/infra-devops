@@ -5,12 +5,14 @@ ENV ANSIBLE_VERSION 5.1.0
 ENV TERRAFORM_VER 1.1.2
 ENV TERRAGRUNT_VER v0.36.1
 ENV GLIBC_VER 2.31-r0
-ENV EKSA_RELEASE 0.8.0
-ENV RELEASE_NUMBER 8
+ENV EKSA_RELEASE 0.9.1
+ENV RELEASE_NUMBER 12
 WORKDIR /root
 
 RUN apk --no-cache add \
         binutils \
+        docker \
+        openrc \
         sudo \
         python3 \
         make \
@@ -50,7 +52,8 @@ RUN apk --no-cache add \
     pip3 install --upgrade pip cffi && \
     pip3 install ansible==${ANSIBLE_VERSION} && \
     pip3 install mitogen ansible-lint jmespath && \
-    pip3 install --upgrade pywinrm \
+    pip3 install --upgrade pywinrm && \
+    pip3 install --upgrade pyvmomi \
     # Install eksctl (The official CLI for Amazon EKS)
     && curl -sL "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp \
     && mv /tmp/eksctl /usr/local/bin \
@@ -76,7 +79,9 @@ RUN apk --no-cache add \
     && curl "https://anywhere-assets.eks.amazonaws.com/releases/eks-a/${RELEASE_NUMBER}/artifacts/eks-a/v${EKSA_RELEASE}/${OS}/amd64/eksctl-anywhere-v${EKSA_RELEASE}-${OS}-amd64.tar.gz" \
         --silent --location \
         | tar xz ./eksctl-anywhere \
-    && sudo mv ./eksctl-anywhere /usr/local/bin/
+    && sudo mv ./eksctl-anywhere /usr/local/bin/ \
+    # start docker cli at boot
+    && rc-update add docker boot
 
 # cleanup
 RUN apk del build-dependencies \

@@ -44,10 +44,10 @@ variable "vm_network" {
   type = string
 }
 
-variable "vm_domain" {
-  description = "Domain for the vSphere virtual machine"
-  type = string
-}
+# variable "vm_domain" {
+#   description = "Domain for the vSphere virtual machine"
+#   type = string
+# }
 
 variable "vm_template" {
   description = "Template used to create the vSphere virtual machines"
@@ -60,35 +60,30 @@ variable "vm_linked_clone" {
   default     = false
 }
 
-variable "vm_baseip" {
-  description = "Base IP used for the vSphere virtual machines"
-  type = string
-}
+# variable "vm_baseip" {
+#   description = "Base IP used for the vSphere virtual machines"
+#   type = string
+# }
 
-variable "vm_ip_suffix" {
-  description = "Ip suffix used for the vSphere virtual machines"
-  type = string
-}
+# variable "vm_ip_suffix" {
+#   description = "Ip suffix used for the vSphere virtual machines"
+#   type = string
+# }
 
-variable "vm_customize_timeout" {
-  description = "timeout in minutes to wait for guest vm ip to be ready. If zero, it turns off timeout"
-  type = number
-}
+# variable "vm_netmask" {
+#   description = "Netmask used for the vSphere virtual machine (example: 24)"
+#   type = number
+# }
 
-variable "vm_netmask" {
-  description = "Netmask used for the vSphere virtual machine (example: 24)"
-  type = number
-}
+# variable "vm_gateway" {
+#   description = "Gateway ip for the vSphere virtual machine"
+#   type = string
+# }
 
-variable "vm_gateway" {
-  description = "Gateway ip for the vSphere virtual machine"
-  type = string
-}
-
-variable "vm_dns_servers" {
-  description = "DNS ip for the vSphere virtual machine"
-  type = list(string)
-}
+# variable "vm_dns_servers" {
+#   description = "DNS ip for the vSphere virtual machine"
+#   type = list(string)
+# }
 
 variable "vm_cpu" {
   description = "Number of vCPU for the vSphere virtual machines"

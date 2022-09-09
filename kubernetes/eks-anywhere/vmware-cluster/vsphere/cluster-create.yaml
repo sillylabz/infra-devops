@@ -1,7 +1,7 @@
 apiVersion: anywhere.eks.amazonaws.com/v1alpha1
 kind: Cluster
 metadata:
-  name: sandbox-eksa
+  name: sample-eksa1
 spec:
   clusterNetwork:
     cni: cilium
@@ -12,36 +12,37 @@ spec:
       cidrBlocks:
       - 10.96.0.0/12
   controlPlaneConfiguration:
-    count: 2
+    count: 3
     endpoint:
-      host: "10.0.0.253"
+      host: "10.0.0.254"
     machineGroupRef:
       kind: VSphereMachineConfig
-      name: sandbox-eksa-cp
+      name: sample-eksa1-cp
   datacenterRef:
     kind: VSphereDatacenterConfig
-    name: sandbox-eksa
+    name: sample-eksa1
   externalEtcdConfiguration:
     count: 3
     machineGroupRef:
       kind: VSphereMachineConfig
-      name: sandbox-eksa-etcd
+      name: sample-eksa1-etcd
   kubernetesVersion: "1.21"
   workerNodeGroupConfigurations:
-  - count: 5
+  - count: 9
+
     machineGroupRef:
       kind: VSphereMachineConfig
-      name: sandbox-eksa
+      name: sample-eksa1
 
 ---
 apiVersion: anywhere.eks.amazonaws.com/v1alpha1
 kind: VSphereDatacenterConfig
 metadata:
-  name: sandbox-eksa
+  name: sample-eksa1
 spec:
   datacenter: "dc-east"
   insecure: true
-  network: "vmPublic"
+  network: "vmPub"
   server: "10.0.0.31"
   thumbprint: ""
 
@@ -49,15 +50,15 @@ spec:
 apiVersion: anywhere.eks.amazonaws.com/v1alpha1
 kind: VSphereMachineConfig
 metadata:
-  name: sandbox-eksa-cp
+  name: sample-eksa1-cp
 spec:
-  datastore: "vmData"
-  diskGiB: 100
-  folder: "eksa"
+  datastore: "WorkloadDatastore (2)"
+  diskGiB: 25
+  # folder: "/SDDC-Datacenter/vm/Linux-Lab"
   memoryMiB: 8192
   numCPUs: 2
   osFamily: ubuntu
-  resourcePool: "Resources"
+  # resourcePool: "Compute-ResourcePool-3"
   users:
   - name: capv
     sshAuthorizedKeys:
@@ -67,15 +68,15 @@ spec:
 apiVersion: anywhere.eks.amazonaws.com/v1alpha1
 kind: VSphereMachineConfig
 metadata:
-  name: sandbox-eksa
+  name: sample-eksa1
 spec:
   datastore: "vmData"
-  diskGiB: 100
-  folder: "eksa"
+  diskGiB: 25
+  # folder: "/SDDC-Datacenter/vm/Linux-Lab"
   memoryMiB: 8192
   numCPUs: 2
   osFamily: ubuntu
-  resourcePool: "Resources"
+  # resourcePool: "Compute-ResourcePool-3"
   users:
   - name: capv
     sshAuthorizedKeys:
@@ -85,18 +86,23 @@ spec:
 apiVersion: anywhere.eks.amazonaws.com/v1alpha1
 kind: VSphereMachineConfig
 metadata:
-  name: sandbox-eksa-etcd
+  name: sample-eksa1-etcd
 spec:
   datastore: "vmData"
-  diskGiB: 100
-  folder: "eksa"
+  diskGiB: 25
+  # folder: "/SDDC-Datacenter/vm/Linux-Lab"
   memoryMiB: 8192
   numCPUs: 2
   osFamily: ubuntu
-  resourcePool: "Resources"
+  # resourcePool: "Compute-ResourcePool-3"
   users:
   - name: capv
     sshAuthorizedKeys:
     - ""
 ---
+arn:aws:iam::202334955716:role/AWSReservedSSO_Guest_Exp_DevOps_449f6a554cd8830c
+- groups:
+      - system:masters
+      rolearn: arn:aws:iam::202334955716:role/AWSReservedSSO_Guest_Exp_DevOps_449f6a554cd8830c
+      username: slalom-admin:{{SessionName}}
 

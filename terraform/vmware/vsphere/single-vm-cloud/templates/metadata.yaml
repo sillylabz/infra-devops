@@ -1,15 +1,16 @@
-local-hostname: sample01
-instance-id: sample01
+instance-id: ubuntu20-cloud
+local-hostname: ubuntu20-cloud
 network:
   version: 2
   ethernets:
-    ens160:
+    ens192:
       dhcp4: false
       addresses:
-        - 10.0.0.99/24
+        - 10.0.0.89/24
       gateway4: 10.0.0.1
       nameservers:
         addresses:
-          - 10.0.0.24
+          - 8.8.8.8
+          - 8.8.4.4
 
 

@@ -34,8 +34,8 @@ resource "vsphere_virtual_machine" "virtual_machine" {
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
   firmware = "efi"
-  wait_for_guest_net_timeout = 5
-  wait_for_guest_ip_timeout = 5
+  wait_for_guest_net_timeout = var.vm_customize_timeout
+  wait_for_guest_ip_timeout = var.vm_customize_timeout
   efi_secure_boot_enabled = false
 
   num_cpus = var.vm_cpu
@@ -59,7 +59,7 @@ resource "vsphere_virtual_machine" "virtual_machine" {
     linked_clone  = var.vm_linked_clone
 
     customize {
-      timeout = 3
+      timeout = var.vm_customize_timeout
 
       linux_options {
         host_name = var.vm_name
@@ -70,6 +70,7 @@ resource "vsphere_virtual_machine" "virtual_machine" {
         ipv4_address = "${var.vm_baseip}.${var.vm_ip_suffix}"
         ipv4_netmask = var.vm_netmask
       }
+
       ipv4_gateway    = var.vm_gateway
       dns_server_list = var.vm_dns_servers
     }
