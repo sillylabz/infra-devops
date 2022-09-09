@@ -17,25 +17,26 @@ resource vsphere_virtual_machine "virtual_machine" {
     network_id   = data.vsphere_network.network.id
     adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
   }
-  wait_for_guest_net_timeout = 0
+  
+  wait_for_guest_net_timeout = 3
+  wait_for_guest_net_routable = false
 
   disk {
     label            = "disk0"
     size             = data.vsphere_virtual_machine.template.disks.0.size
     eagerly_scrub    = data.vsphere_virtual_machine.template.disks.0.eagerly_scrub
-    # thin_provisioned = data.vsphere_virtual_machine.template.disks.0.thin_provisioned
+    thin_provisioned = data.vsphere_virtual_machine.template.disks.0.thin_provisioned
   }
 
   clone {
     template_uuid = data.vsphere_virtual_machine.template.id
+    timeout = 10
   }
-
-  
 
   vapp {
     properties ={
-      hostname = var.vm_name
       user-data = base64encode(file("${path.module}/templates/kickstart.yaml"))
+      hostname = var.vm_name
     }
   }
 

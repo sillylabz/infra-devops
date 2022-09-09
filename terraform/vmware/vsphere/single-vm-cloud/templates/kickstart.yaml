@@ -1,31 +1,19 @@
-#cloud-config 
-chpasswd: #Change your local password here
-    list: |
-      devops:devops123
-    expire: false
-users:
-  - default #Define a default user
-  - name: devops
-    lock_passwd: false
-    groups: sudo, users, admin
-    shell: /bin/bash
-    sudo: ['ALL=(ALL) NOPASSWD:ALL']
-system_info: 
-  default_user:
-    name: default-user
-    lock_passwd: false
-    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
-#disable_root: false #Enable root acce
-ssh_pwauth: yes #Use pwd to access (otherwise follow official doc to use ssh-keys)
-random_seed:
-    file: /dev/urandom
-    command: ["pollinate", "-r", "-s", "https://entropy.ubuntu.com"]
-    command_required: true
-package_upgrade: true
-packages:
-  - python3-pip #Dependency package for cur
+#cloud-config
+
+write_files:
+  - path: /etc/netplan/10-user-network.yaml
+    content: | 
+      network:
+        version: 2
+        ethernets:
+          ens192:
+            dhcp4: false
+            addresses:
+            - 10.0.0.89/24
+            gateway4: 10.0.0.1
+            nameservers:
+              addresses:
+              - 8.8.8.8
+              - 8.8.4.4
 runcmd:
-   - curl -sSL https://raw.githubusercontent.com/vmware/cloud-init-vmware-guestinfo/master/install.sh | sh - #Install cloud-init
-power_state:
-  timeout: 30
-  mode: reboot
+  - sudo netplan apply
