@@ -1,0 +1,18 @@
+controller:
+  name: nginx-ingress
+  kind: deployment
+  nginxplus: false
+  image:
+    repository: nginx/nginx-ingress
+    tag: "2.3.1"
+    pullPolicy: IfNotPresent
+  resources: 
+    limits:
+      cpu: 100m
+      memory: 64Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+  replicaCount: 1
+
+
