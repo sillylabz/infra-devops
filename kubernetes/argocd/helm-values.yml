@@ -1,0 +1,360 @@
+nameOverride: argocd
+kubeVersionOverride: "1.23.13"
+createAggregateRoles: false
+crds:
+  install: true
+  keep: false
+
+global:
+  image:
+    repository: quay.io/argoproj/argocd
+    tag: ""
+    imagePullPolicy: IfNotPresent
+
+configs:
+  cm:
+    create: true
+  params:
+    annotations: {}
+    server.insecure: true
+  rbac:
+    create: true
+
+
+## Application controller
+controller:
+  name: application-controller
+  replicas: 1
+  pdb:
+    enabled: false
+    minAvailable: ""
+    maxUnavailable: ""
+  image:
+    repository: ""
+    tag: ""
+
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+  metrics:
+    enabled: true
+    applicationLabels:
+      enabled: true
+      labels: []
+    service:
+      annotations: {}
+      labels: {}
+      servicePort: 8082
+      portName: http-metrics
+    rules:
+      enabled: false
+
+  clusterAdminAccess:
+    enabled: true
+
+
+## Dex
+dex:
+  enabled: true
+  name: dex-server
+  metrics:
+    enabled: true
+    service:
+      portName: http-metrics
+  pdb:
+    enabled: false
+    labels: {}
+    minAvailable: ""
+    maxUnavailable: ""
+  image:
+    repository: ghcr.io/dexidp/dex
+    tag: v2.35.3
+  resources:
+    limits:
+      cpu: 50m
+      memory: 64Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
+
+
+## Redis
+redis:
+  enabled: true
+  name: redis
+  pdb:
+    enabled: false
+    labels: {}
+    annotations: {}
+    minAvailable: ""
+    maxUnavailable: ""
+  image:
+    repository: public.ecr.aws/docker/library/redis
+    tag: 7.0.5-alpine
+  resources: 
+   limits:
+     cpu: 200m
+     memory: 128Mi
+   requests:
+     cpu: 100m
+     memory: 64Mi
+  service:
+    annotations: {}
+    labels: {}
+  metrics:
+    enabled: true
+    image:
+      repository: public.ecr.aws/bitnami/redis-exporter
+      tag: 1.26.0-debian-10-r2
+      imagePullPolicy: IfNotPresent
+    containerPort: 9121
+    resources:
+      limits:
+        cpu: 50m
+        memory: 64Mi
+      requests:
+        cpu: 10m
+        memory: 32Mi
+    service:
+      type: ClusterIP
+      clusterIP: None
+      annotations: {}
+      labels: {}
+
+      servicePort: 9121
+      portName: http-metrics
+
+
+## Argo CD Server
+server:
+  name: server
+  replicas: 1
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+    behavior:
+      scaleDown:
+       stabilizationWindowSeconds: 300
+       policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 180
+      scaleUp:
+        stabilizationWindowSeconds: 300
+        policies:
+        - type: Pods
+          value: 2
+          periodSeconds: 60
+  pdb:
+    enabled: false
+    labels: {}
+    annotations: {}
+    minAvailable: ""
+    maxUnavailable: ""
+  image:
+    repository: ""
+    tag: ""
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+  service:
+    annotations: {}
+    labels: {}
+    type: ClusterIP
+    nodePortHttp: 30080
+    nodePortHttps: 30443
+    servicePortHttp: 80
+    servicePortHttps: 443
+    servicePortHttpName: http
+    servicePortHttpsName: https
+    namedTargetPort: true
+    loadBalancerIP: ""
+  metrics:
+    enabled: true
+    service:
+      annotations: {}
+      labels: {}
+      servicePort: 8083
+      portName: http-metrics
+  serviceAccount:
+    create: true
+    name: argocd-server
+    automountServiceAccountToken: true
+  ingress:
+    enabled: false
+    annotations: {}
+    labels: {}
+    ingressClassName: ""
+    hosts: []
+    paths:
+      - /
+    pathType: Prefix
+    extraPaths: []
+      # - path: /*
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: ssl-redirect
+      #       port:
+      #         name: use-annotation
+
+    tls: []
+      # - secretName: your-certificate-name
+      #   hosts:
+      #     - argocd.example.com
+    https: false
+  extensions:
+    enabled: false
+    image:
+      repository: "ghcr.io/argoproj-labs/argocd-extensions"
+      tag: "v0.1.0"
+    resources:
+      limits:
+        cpu: 50m
+        memory: 128Mi
+      requests:
+        cpu: 10m
+        memory: 64Mi
+
+## Repo Server
+repoServer:
+  name: repo-server
+  replicas: 1
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 80
+    targetMemoryUtilizationPercentage: 80
+    behavior:
+      scaleDown:
+       stabilizationWindowSeconds: 300
+       policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 180
+      scaleUp:
+        stabilizationWindowSeconds: 300
+        policies:
+        - type: Pods
+          value: 2
+          periodSeconds: 60
+  pdb:
+    enabled: false
+    labels: {}
+    annotations: {}
+    minAvailable: ""
+    maxUnavailable: ""
+  image:
+    repository: "" 
+    tag: ""
+  resources:
+    limits:
+      cpu: 50m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+  service:
+    annotations: {}
+    labels: {}
+    port: 8081
+    portName: https-repo-server
+  metrics:
+    enabled: true
+    service:
+      annotations: {}
+      labels: {}
+      servicePort: 8084
+      portName: http-metrics
+
+
+## ApplicationSet controller
+applicationSet:
+  enabled: true
+  name: applicationset-controller
+  replicaCount: 1
+  pdb:
+    enabled: false
+    labels: {}
+    annotations: {}
+    minAvailable: ""
+    maxUnavailable: ""
+  image:
+    repository: ""
+    tag: ""
+  metrics:
+    enabled: true
+    service:
+      annotations: {}
+      labels: {}
+      servicePort: 8085
+      portName: http-metrics
+  service:
+    annotations: {}
+    labels: {}
+    port: 7000
+    portName: webhook
+  serviceAccount:
+    create: true
+    annotations: {}
+    labels: {}
+    name: "applicationset-controller"
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+# Notifications controller
+notifications:
+  enabled: true
+  name: notifications-controller
+  affinity: {}
+  argocdUrl:
+  pdb:
+    enabled: false
+    minAvailable: ""
+    maxUnavailable: ""
+  image:
+    repository: ""
+    tag: ""
+  secret:
+    create: true
+    annotations: {}
+  metrics:
+    enabled: false
+    port: 9001
+    service:
+      annotations: {}
+      labels: {}
+      portName: http-metrics
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  serviceAccount:
+    create: true
+    name: argocd-notifications-controller
+    annotations: {}
+    labels: {}
+  cm:
+    create: true
+ 
