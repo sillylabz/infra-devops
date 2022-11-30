@@ -1,23 +1,18 @@
-# project_name = sample
 
 init:
 	terraform init 
 
 plan:
-	terraform plan \
-		-var-file=shared_vars.tfvars
+	terraform plan 
+
+plan-destroy:
+	terraform plan -destroy 
 
 apply:
-	terraform apply \
-		-var-file=shared_vars.tfvars \
-		-auto-approve
+	terraform apply -auto-approve
 
 destroy:
-	terraform destroy \
-		-var-file=shared_vars.tfvars \
-		-auto-approve
+	terraform destroy -auto-approve
 
-outputs:
-	terraform output
 
 

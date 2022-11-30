@@ -1,89 +1,88 @@
 terraform {
-  required_version = ">= 0.12"
+  required_version = ">= 1.1.9"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 4.30.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~>2.14.0"
+    }
+  }
 }
 
-resource "random_string" "suffix" {
-  length  = 8
-  special = false
-}
+locals {
+  cluster_name                  = "${var.app}-${var.env}-cluster"
+  k8s_service_account_name      = "${local.cluster_name}-irsa"
+  k8s_service_account_namespace = local.cluster_name
 
-# ebs csi driver iam policy
-resource "aws_iam_policy" "aws_ebs_csi_policy" {
-  name   = "${var.project_name}-${var.env}-eks-ebs-policy"
-  path   = "/"
-  policy = data.aws_iam_policy_document.aws_ebs_csi_policy_document.json
-}
+  # Get the EKS OIDC Issuer without https:// prefix
+  eks_oidc_issuer = trimprefix(data.aws_eks_cluster.eks.identity[0].oidc[0].issuer, "https://")
 
-# efs csi driver iam policy
-resource "aws_iam_policy" "aws_efs_csi_policy" {
-  name   = "${var.project_name}-${var.env}-eks-efs-policy"
-  path   = "/"
-  policy = data.aws_iam_policy_document.aws_efs_csi_policy_document.json
+  system_masters_users = [for user in var.system_masters_users : {
+    userarn  = "arn:aws:iam::${var.aws_account_id}:user/${user}"
+    username = user
+    groups   = ["system:masters"]
+    }
+  ]
 }
 
 module "eks" {
-  source             = "terraform-aws-modules/eks/aws"
-  cluster_name       = local.cluster_name
-  cluster_version    = "1.19"
-  subnets            = data.aws_subnet_ids.private_subnets.ids
-  write_kubeconfig   = false
-  manage_aws_auth    = false
-  
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 18.0"
+
+  cluster_name    = local.cluster_name
+  cluster_version = var.cluster_version
+  vpc_id          = data.aws_vpc.vpc.id
+  subnet_ids      = data.aws_subnets.private.ids
+  aws_auth_users  = local.system_masters_users
+
+  manage_aws_auth_configmap = true
+
+  cluster_endpoint_public_access  = false
   cluster_endpoint_private_access = true
-  cluster_endpoint_public_access = true
 
-  vpc_id = data.aws_vpc.selected.id
-
-  node_groups_defaults = {
-    ami_type  = "AL2_x86_64"
-    root_encrypted = true
-    root_kms_key_id = data.aws_kms_key.sample_kms_key.arn
-    additional_tags = var.tags
-  }
-
-  node_groups = {
-    general_purpose = {
-      name_prefix = "general-purpose"
-      desired_capacity = var.gp_node_group_desired_capacity
-      max_capacity     = var.gp_node_group_max_capacity
-      min_capacity     = var.gp_node_group_min_capacity
-      disk_size = var.gp_node_group_disk_size
-      subnets = data.aws_subnet_ids.private_subnets.ids
-
-      instance_types = [var.gp_node_group_instance_type]
-      capacity_type  = var.gc_node_group_capacity_type
-      k8s_labels = {
-        Environment = var.env
-        "Name" = "${local.cluster_name}-gp-worker-nodes"
-      }
+  cluster_security_group_additional_rules = {
+    ingress_all_443_api = {
+      description      = "API all ingress"
+      protocol         = "tcp"
+      from_port        = 443
+      to_port          = 443
+      type             = "ingress"
+      cidr_blocks      = ["0.0.0.0/0"]
+      ipv6_cidr_blocks = ["::/0"]
     }
   }
 
+  create_kms_key = true
+  cluster_encryption_config = [{
+    resources = ["secrets"]
+  }]
+  kms_key_deletion_window_in_days = 7
+  enable_kms_key_rotation         = true
 
-  # Create security group rules to allow communication between pods on workers and pods in managed node groups.
-  # Set this to true if you have AWS-Managed node groups and Self-Managed worker groups.
-  # See https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1089
-  worker_create_cluster_primary_security_group_rules = true
-  
-  map_roles    = var.map_roles
-  map_users    = var.map_users
-  map_accounts = var.map_accounts
-}
-
-
-
-### vpc endpoints
-data aws_iam_policy_document "allow_all" {
-  statement {
-    actions = ["*"]
-    principals {
-      identifiers = ["*"]
-      type        = "AWS"
+  cluster_addons = {
+    coredns = {
+      resolve_conflicts = "OVERWRITE"
     }
-    resources = ["*"]
+    kube-proxy = {}
+    vpc-cni = {
+      resolve_conflicts = "OVERWRITE"
+    }
+  }
+
+  # EKS Managed Node Group(s)
+  eks_managed_node_group_defaults = {
+    disk_size      = 50
+    instance_types = ["t3.medium"]
+  }
+
+  eks_managed_node_groups = var.eks_managed_node_groups
+
+  tags = {
+    env  = var.env
+    app  = var.app
   }
 }
-
-
-
 
