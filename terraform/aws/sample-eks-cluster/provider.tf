@@ -1,9 +1,8 @@
 provider "aws" {
+  region = var.aws_region
   default_tags {
     tags = {
       TerraformManaged = "True"
-      env              = var.env
-      app = var.app
     }
   }
 }
