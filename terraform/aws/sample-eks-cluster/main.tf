@@ -35,12 +35,12 @@ module "eks" {
   cluster_name    = local.cluster_name
   cluster_version = var.cluster_version
   vpc_id          = data.aws_vpc.vpc.id
-  subnet_ids      = data.aws_subnets.private.ids
+  subnet_ids      = data.aws_subnets.public.ids
   aws_auth_users  = local.system_masters_users
 
   manage_aws_auth_configmap = true
 
-  cluster_endpoint_public_access  = false
+  cluster_endpoint_public_access  = true
   cluster_endpoint_private_access = true
 
   cluster_security_group_additional_rules = {
