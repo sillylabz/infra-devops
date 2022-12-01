@@ -32,6 +32,7 @@ metrics:
 service:
   enabled: false
   type: ClusterIP
+
 runners:
   config: |
     [[runners]]
@@ -44,6 +45,7 @@ runners:
   builds: {}
   services: {}
   helpers: {}
+tags: 
  
 securityContext:
   allowPrivilegeEscalation: false
