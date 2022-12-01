@@ -69,27 +69,29 @@ resource "helm_release" "ebs_csi_controller" {
 
 # alb ingress controller helm deployment
 resource "helm_release" "alb_ingress_controller" {
-  name            = "alb-ingress-controller"
-  chart           = "aws-load-balancer-controller"
-  repository = "https://aws.github.io/eks-charts"
-  namespace       = local.alb_ingress_namespace
+  name             = "alb-ingress-controller"
+  chart            = "aws-load-balancer-controller"
+  repository       = "https://aws.github.io/eks-charts"
+  namespace        = local.alb_ingress_namespace
   create_namespace = true
-  cleanup_on_fail = true
+  cleanup_on_fail  = true
   values = [
     templatefile(
       "${path.module}/templates/alb-ingress-values.tpl",
       {
-        image_tag = "v2.4.5",
-        alb_ingress_controller_role_arn                 = module.alb_ingress_irsa_role.iam_role_arn,
-        alb_ingress_service_account_name                 = local.alb_ingress_service_account_name,
-        cluster_name                  = local.cluster_name,
-        aws_region = var.aws_region
-        app                        = var.app,
-        env                  = var.env
+        image_tag                        = "v2.4.5",
+        alb_ingress_controller_role_arn  = module.loadbalancer_ingress_irsa_role.iam_role_arn,
+        alb_ingress_service_account_name = local.alb_ingress_service_account_name,
+        cluster_name                     = local.cluster_name,
+        aws_region                       = var.aws_region,
+        app                              = var.app,
+        tier                             = var.tier,
+        env                              = var.env
       }
     )
   ]
 }
+
 
 # datadog helm deployment
 resource "helm_release" "datadog" {
@@ -134,8 +136,7 @@ resource "helm_release" "prometheus" {
         server_pvc_sc = "ebs-csi-sc",
         pushgateway_enable_pv = false,
         pushgateway_pvc_size = "10Gi",
-        pushgateway_pvc_sc = "ebs-csi-sc",
-
+        pushgateway_pvc_sc = "ebs-csi-sc"
       }
     )
   ]
