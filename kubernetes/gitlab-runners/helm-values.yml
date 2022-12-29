@@ -38,18 +38,25 @@ runners:
       [runners.kubernetes]
         namespace = "{{.Release.Namespace}}"
         image = "ubuntu:16.04"
+        privileged = true
+      [[runners.kubernetes.volumes.empty_dir]]
+          name = "docker"
+          mount_path = "/var/run/docker.sock"
+          host_path = "/var/run/docker.sock"
+          medium = "Memory"
   executor: kubernetes
   # image: ubuntu:16.04
   cache: {}
   builds: {}
   services: {}
   helpers: {}
+  tags: "shared, infra, deploy, kubernetes, kind, build"
  
 securityContext:
-  allowPrivilegeEscalation: false
+  allowPrivilegeEscalation: true
   readOnlyRootFilesystem: false
   runAsNonRoot: true
-  privileged: false
+  privileged: true
   capabilities:
     drop: ["ALL"]
 
