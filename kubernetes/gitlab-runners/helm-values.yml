@@ -37,31 +37,32 @@ runners:
     [[runners]]
       [runners.kubernetes]
         namespace = "{{.Release.Namespace}}"
-        image = "ubuntu:16.04"
+        image = "ubuntu:20.04"
+        # docker in docker builds require privileged containers
+        privileged = true
   executor: kubernetes
-  # image: ubuntu:16.04
   cache: {}
   builds: {}
   services: {}
   helpers: {}
  
 securityContext:
-  allowPrivilegeEscalation: false
+  allowPrivilegeEscalation: true
   readOnlyRootFilesystem: false
   runAsNonRoot: true
-  privileged: false
+  privileged: true
   capabilities:
     drop: ["ALL"]
 
 resources: {}
-hpa: {}
-  # minReplicas: 1
-  # maxReplicas: 10
-  # metrics:
-  # - type: Pods
-  #   pods:
-  #     metricName: gitlab_runner_jobs
-  #     targetAverageValue: 400m
+# hpa: 
+#   minReplicas: 1
+#   maxReplicas: 10
+#   metrics:
+#   - type: Pods
+#     pods:
+#       metricName: gitlab_runner_jobs
+#       targetAverageValue: 400m
 
 secrets: []
   # Example:
@@ -72,17 +73,4 @@ secrets: []
   #       path: path_one
 
 
-## Additional volumeMounts to add to the runner container
-##
-volumeMounts: []
-  # Example:
-  # - name: my-volume
-  #   mountPath: /mount/path
 
-## Additional volumes to add to the runner deployment
-##
-volumes: []
-  # Example:
-  # - name: my-volume
-  #   persistentVolumeClaim:
-  #     claimName: my-pvc

@@ -6,7 +6,7 @@ replicaCount: 3
 
 image:
   repository: 602401143452.dkr.ecr.us-west-2.amazonaws.com/amazon/aws-load-balancer-controller
-  tag: v2.2.1
+  tag: v2.4.5
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -14,7 +14,7 @@ nameOverride: ""
 fullnameOverride: "aws-load-balancer-controller"
 
 # The name of the Kubernetes cluster. A non-empty value is required
-clusterName: cloudops-cluster-dev
+clusterName: 
 
 serviceAccount:
   # Specifies whether a service account should be created
