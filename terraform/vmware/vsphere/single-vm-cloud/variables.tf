@@ -65,10 +65,10 @@ variable "vm_gateway" {
 #   type = string
 # }
 
-# variable "vm_netmask" {
-#   description = "Netmask used for the vSphere virtual machine (example: 24)"
-#   type = number
-# }
+variable "vm_disk_size" {
+  description = "Disk size in GB for vm disk. Defaults to template disk size"
+  type = number
+}
 
 
 variable "vm_dns_server" {
