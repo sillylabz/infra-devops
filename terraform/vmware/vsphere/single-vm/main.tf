@@ -33,7 +33,7 @@ resource "vsphere_virtual_machine" "virtual_machine" {
   name             = var.vm_name
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
-  firmware = "efi"
+  firmware = "bios"
   wait_for_guest_net_timeout = var.vm_customize_timeout
   wait_for_guest_ip_timeout = var.vm_customize_timeout
   efi_secure_boot_enabled = false

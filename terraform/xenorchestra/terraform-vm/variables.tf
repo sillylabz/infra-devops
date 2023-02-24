@@ -30,18 +30,6 @@ variable "xen_pool" {
   type = string
 }
 
-variable "xen_sr_id" {
-  type = string
-}
-
-variable "xen_network_id" {
-  type = string
-}
-
-variable "xen_cloud_config_name" {
-  type = string
-}
-
 variable "vm_template_name" {
   type = string
 }
