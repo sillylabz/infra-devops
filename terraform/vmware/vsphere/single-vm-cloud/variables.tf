@@ -68,6 +68,7 @@ variable "vm_gateway" {
 variable "vm_disk_size" {
   description = "Disk size in GB for vm disk. Defaults to template disk size"
   type = number
+  default = null
 }
 
 
