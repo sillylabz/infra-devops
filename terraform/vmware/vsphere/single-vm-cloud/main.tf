@@ -46,7 +46,8 @@ resource vsphere_virtual_machine "virtual_machine" {
       hostname_fqdn = "${var.vm_name}.${var.vm_domain}",
       vm_ip = var.vm_ipv4_address,
       vm_gateway = var.vm_gateway,
-      vm_dns_server = var.vm_dns_server
+      vm_dns_server = var.vm_dns_server,
+      vm_disk_extend_size = var.vm_disk_size != null ? tonumber(var.vm_disk_size - tonumber(data.vsphere_virtual_machine.template.disks.0.size)) : tonumber(var.vm_disk_size - tonumber(data.vsphere_virtual_machine.template.disks.0.size))
       
     }))
     "guestinfo.userdata.encoding" = "gzip+base64"

@@ -13,7 +13,9 @@ write_files:
             dhcp4: false
             addresses:
               - ${vm_ip}/24
-            gateway4: ${vm_gateway}
+            routes:
+              - to: default
+                via: ${vm_gateway}
             nameservers:
               addresses:
                 - 8.8.8.8
@@ -26,5 +28,9 @@ write_files:
 
 runcmd:
   - netplan apply
+  - growpart /dev/sda 3
+  - lvextend -l +100%FREE /dev/mapper/ubuntu--vg-ubuntu--lv
+  - resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
+
 
 
