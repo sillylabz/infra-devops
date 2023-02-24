@@ -1,5 +1,6 @@
-gitlab_url ?= "https://gitlab.com"
+gitlab_url ?= "https://gitlab.com/"
 runner_registration_token ?= astryhs334etd
+runner_tags ?= "shared"
 
 deploy-runner:
 	helm upgrade -i gitlab-runner gitlab-runner \
@@ -7,5 +8,6 @@ deploy-runner:
 		--namespace gitlab-runner \
 		--create-namespace \
 		-f helm-values.yml \
-		--set gitlabUrl=$(gitlab_url),runnerRegistrationToken=$(runner_registration_token) 
+		--set gitlabUrl=$(gitlab_url),runnerRegistrationToken=$(runner_registration_token) \
+		--set tags=$(runner_tags)
 

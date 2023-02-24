@@ -14,7 +14,7 @@ nameOverride: ""
 fullnameOverride: "aws-load-balancer-controller"
 
 # The name of the Kubernetes cluster. A non-empty value is required
-clusterName: <cluster_name>
+clusterName: 
 
 serviceAccount:
   # Specifies whether a service account should be created
