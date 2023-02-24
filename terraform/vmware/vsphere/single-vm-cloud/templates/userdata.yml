@@ -1,0 +1,30 @@
+#cloud-config
+hostname: ${hostname}
+fqdn: ${hostname_fqdn}
+
+write_files:
+  - content: | 
+      network:
+        version: 2
+        ethernets:
+          nics:
+            match:
+              name: ens160
+            dhcp4: false
+            addresses:
+              - ${vm_ip}/24
+            gateway4: ${vm_gateway}
+            nameservers:
+              addresses:
+                - 8.8.8.8
+                - 8.8.4.4
+                - ${vm_dns_server}
+    path: /etc/netplan/50-cloud-init.yaml
+  - content: | 
+      network: {config: disabled}
+    path: /etc/cloud/cloud.cfg.d/95-disable-network-config.cfg
+
+runcmd:
+  - netplan apply
+
+
