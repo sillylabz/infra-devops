@@ -20,6 +20,10 @@ helm repo add eks https://aws.github.io/eks-charts
 helm repo update
 
 # helm install alb ingress controller
-# helm upgrade -i aws-load-balancer-controller eks/aws-load-balancer-controller -f helm-values-alb-ingress.yaml -n kube-system
+helm upgrade -i aws-load-balancer-controller aws-load-balancer-controller \
+  --repo https://aws.github.io/eks-charts \
+  -n alb-ingress-controller \
+  --create-namespace \
+  -f helm-values-alb-ingress.yaml
 
 

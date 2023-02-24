@@ -39,14 +39,19 @@ runners:
       [runners.kubernetes]
         namespace = "{{.Release.Namespace}}"
         image = "ubuntu:20.04"
-        # docker in docker builds require privileged containers
         privileged = true
+      [[runners.kubernetes.volumes.empty_dir]]
+          name = "docker"
+          mount_path = "/var/run/docker.sock"
+          host_path = "/var/run/docker.sock"
+          medium = "Memory"
+
   executor: kubernetes
   cache: {}
   builds: {}
   services: {}
   helpers: {}
-tags: 
+  tags: "shared, infra, deploy, kubernetes, kind, build"
  
 securityContext:
   allowPrivilegeEscalation: true

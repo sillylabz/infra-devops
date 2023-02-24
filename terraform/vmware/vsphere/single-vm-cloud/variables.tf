@@ -24,30 +24,20 @@ variable "vm_name" {
   type = string
 }
 
-// variable "vm_count" {
-//   description = "Number of vSphere virtual machines to be created"
-//   type = number
-// }
-
 variable "vm_datastore" {
   description = "Datastore used for the vSphere virtual machines"
   type = string
 }
-
-// variable "vm_datastore_cluster" {
-//   description = "Datastore cluster used for the vSphere virtual machines"
-//   type = string
-// }
 
 variable "vm_network" {
   description = "Network used for the vSphere virtual machines"
   type = string
 }
 
-# variable "vm_domain" {
-#   description = "Domain for the vSphere virtual machine"
-#   type = string
-# }
+variable "vm_domain" {
+  description = "Domain for the vSphere virtual machine"
+  type = string
+}
 
 variable "vm_template" {
   description = "Template used to create the vSphere virtual machines"
@@ -60,10 +50,15 @@ variable "vm_linked_clone" {
   default     = false
 }
 
-# variable "vm_baseip" {
-#   description = "Base IP used for the vSphere virtual machines"
-#   type = string
-# }
+variable "vm_ipv4_address" {
+  description = "IP used for the vSphere virtual machines"
+  type = string
+}
+
+variable "vm_gateway" {
+  description = "Gateway ip for the vSphere virtual machine"
+  type = string
+}
 
 # variable "vm_ip_suffix" {
 #   description = "Ip suffix used for the vSphere virtual machines"
@@ -75,15 +70,11 @@ variable "vm_linked_clone" {
 #   type = number
 # }
 
-# variable "vm_gateway" {
-#   description = "Gateway ip for the vSphere virtual machine"
-#   type = string
-# }
 
-# variable "vm_dns_servers" {
-#   description = "DNS ip for the vSphere virtual machine"
-#   type = list(string)
-# }
+variable "vm_dns_server" {
+  description = "DNS ip for the vSphere virtual machine"
+  type = string
+}
 
 variable "vm_cpu" {
   description = "Number of vCPU for the vSphere virtual machines"

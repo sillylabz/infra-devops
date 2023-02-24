@@ -18,7 +18,7 @@ clusterName:
 
 serviceAccount:
   # Specifies whether a service account should be created
-  create: false
+  create: true
   # Annotations to add to the service account
   annotations: {}
   # The name of the service account to use.
@@ -45,17 +45,13 @@ securityContext:
 # Time period for the controller pod to do a graceful shutdown
 terminationGracePeriodSeconds: 10
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+resources:
+  limits:
+    cpu: 200m
+    memory: 521Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi
 
 # priorityClassName specifies the PriorityClass to indicate the importance of controller pods
 # ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass
@@ -72,11 +68,11 @@ podAnnotations: {}
 podLabels: {}
 
 # Enable cert-manager
-enableCertManager: true
+enableCertManager: false
 
 # The ingress class this controller will satisfy. If not specified, controller will match all
 # ingresses without ingress class annotation and ingresses of type alb
-ingressClass: 
+ingressClass: alb
 
 # The AWS region for the kubernetes cluster. Set to use KIAM or kube2iam for example.
 region: us-east-1
@@ -178,16 +174,13 @@ extraVolumes:
 
 # defaultTags are the tags to apply to all AWS resources managed by this controller
 defaultTags: 
-  Environment: "DEV"
-  CostCenter: "1410"
-  Owner: "Sam Thomson"
   # default_tag1: value1
   # default_tag2: value2
 
 # podDisruptionBudget specifies the disruption budget for the controller pods.
 # Disruption budget will be configured only when the replicaCount is greater than 1
-podDisruptionBudget: {}
-#  maxUnavailable: 1
+podDisruptionBudget:
+  maxUnavailable: 1
 
 # externalManagedTags is the list of tag keys on AWS resources that will be managed externally
 externalManagedTags: []

@@ -33,17 +33,25 @@ resource vsphere_virtual_machine "virtual_machine" {
     timeout = 10
   }
 
-  vapp {
-    properties ={
-      user-data = base64encode(file("${path.module}/templates/kickstart.yaml"))
-      hostname = var.vm_name
-    }
+  # extra_config = {
+  #   "guestinfo.userdata"          = base64gzip(file("${path.module}/templates/userdata.yaml"))
+  #   "guestinfo.userdata.encoding" = "gzip+base64"
+  #   "guestinfo.metadata"          = base64gzip(file("${path.module}/templates/metadata.yaml"))
+  #   "guestinfo.metadata.encoding" = "gzip+base64"
+  # }
+  
+  extra_config = {
+    "guestinfo.userdata"          = base64gzip(templatefile("${path.module}/templates/userdata.yml", {
+      hostname = var.vm_name,
+      hostname_fqdn = "${var.vm_name}.${var.vm_domain}",
+      vm_ip = var.vm_ipv4_address,
+      vm_gateway = var.vm_gateway,
+      vm_dns_server = var.vm_dns_server
+      
+    }))
+    "guestinfo.userdata.encoding" = "gzip+base64"
   }
 
-  extra_config = {
-    "guestinfo.metadata"          = base64encode(file("${path.module}/templates/metadata.yaml"))
-    "guestinfo.metadata.encoding" = "base64"
-    "guestinfo.userdata"          = base64encode(file("${path.module}/templates/userdata.yaml"))
-    "guestinfo.userdata.encoding" = "base64"
-  }
+
+
 }

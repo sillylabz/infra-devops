@@ -26,3 +26,19 @@ data "vsphere_virtual_machine" "template" {
   name          = var.vm_template
   datacenter_id = data.vsphere_datacenter.dc.id
 }
+
+
+# data "template_file" "script" {
+#   template = "${file("${path.module}/templates/userdata.yaml")}"
+
+#   vars = {}
+# }
+
+# data "template_cloudinit_config" "server_config" {
+#   gzip          = true
+#   base64_encode = true
+#   part {
+#     content_type = "text/cloud-config"
+#     content = data.template_file.script.rendered
+#   }
+# }
