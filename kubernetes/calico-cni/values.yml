@@ -1,0 +1,27 @@
+
+installation:
+  enabled: true
+  kubernetesProvider: ""
+  cni:
+    type: Calico
+  calicoNetwork:
+    bgp: Disabled
+    ipPools:
+    - cidr: 10.244.0.0/16
+      encapsulation: VXLAN
+
+apiServer:
+  enabled: true
+
+resources: {}
+
+nodeSelector:
+  kubernetes.io/os: linux
+
+tigeraOperator:
+  image: tigera/operator
+  version: v1.29.0
+  registry: quay.io
+calicoctl:
+  image: docker.io/calico/ctl
+  tag: v3.25.0

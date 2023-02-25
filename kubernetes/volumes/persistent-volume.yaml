@@ -4,11 +4,24 @@ metadata:
   name: demo-pv
   namespace: demo-operator
 spec:
-  storageClassName: gp2
+  storageClassName: vsphere-csi-sc
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   capacity:
     storage: 20Gi
   persistentVolumeReclaimPolicy: Retain
   hostPath:
     path: /data/jenkins-volume/
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: demo-pvc
+spec:
+  storageClassName: vsphere-csi-sc
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: "demo-pv"
