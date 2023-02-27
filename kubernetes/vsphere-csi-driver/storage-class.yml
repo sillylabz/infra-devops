@@ -1,0 +1,9 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: vsphere-csi-sc
+parameters:
+  csi.storage.k8s.io/fstype: ext4
+  storagepolicyname: "Vsphere CSI Storage Policy"
+provisioner: csi.vsphere.vmware.com
+
