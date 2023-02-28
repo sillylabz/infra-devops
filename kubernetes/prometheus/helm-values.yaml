@@ -1,122 +1,85 @@
-
-fullnameOverride: "prometheus"
-kubeTargetVersionOverride: ""
-kubeVersionOverride: ""
-
-defaultRules:
+rbac:
   create: true
-  # rules:
-  #   alertmanager: true
-  #   etcd: true
-  #   configReloaders: true
-  #   general: true
-  #   k8s: true
-  #   kubeApiserverAvailability: true
-  #   kubeApiserverBurnrate: true
-  #   kubeApiserverHistogram: true
-  #   kubeApiserverSlos: true
-  #   kubeControllerManager: true
-  #   kubelet: true
-  #   kubeProxy: true
-  #   kubePrometheusGeneral: true
-  #   kubePrometheusNodeRecording: true
-  #   kubernetesApps: true
-  #   kubernetesResources: true
-  #   kubernetesStorage: true
-  #   kubernetesSystem: true
-  #   kubeSchedulerAlerting: true
-  #   kubeSchedulerRecording: true
-  #   kubeStateMetrics: true
-  #   network: true
-  #   node: true
-  #   nodeExporterAlerting: true
-  #   nodeExporterRecording: true
-  #   prometheus: true
-  #   prometheusOperator: true
-  appNamespacesTarget: ".*"
 
-  runbookUrl: "https://runbooks.prometheus-operator.dev/runbooks"
+podSecurityPolicy:
+  enabled: false
 
-  disabled: {}
-  # KubeAPIDown: true
-
-global:
-  rbac:
+imagePullSecrets: []
+serviceAccounts:
+  server:
     create: true
-    createAggregateClusterRoles: true
+    name: ""
+    annotations: {}
 
-  imageRegistry: ""
+configmapReload:
+  prometheus:
+    enabled: true
+    name: configmap-reload
+    image:
+      repository: jimmidyson/configmap-reload
+      tag: v0.8.0
+      digest: ""
+      pullPolicy: IfNotPresent
+
+server:
+  name: server
+  sidecarTemplateValues: {}
+  image:
+    repository: quay.io/prometheus/prometheus
+    tag: ""
+    digest: ""
+    pullPolicy: IfNotPresent
+
+  extraFlags:
+    - web.enable-lifecycle
+  configPath: /etc/config/prometheus.yml
+  storagePath: ""
+  global:
+    scrape_interval: 1m
+    scrape_timeout: 10s
+    evaluation_interval: 1m
+  persistentVolume:
+    enabled: false
+    accessModes:
+      - ReadWriteOnce
+    labels: {}
+    annotations: {}
+    existingClaim: ""
+    mountPath: /data
+    size: 8Gi
+    storageClass: "vsphere-csi-sc"
+  emptyDir:
+    sizeLimit: "8Gi"
+
+networkPolicy:
+  enabled: false
+forceNamespace: ""
 
 alertmanager:
   enabled: true
-  apiVersion: v2
-  serviceAccount:
-    create: true
+  persistence:
+    enabled: false
+    storageClass: "vsphere-csi-sc"
+    accessModes:
+      - ReadWriteOnce
+    size: "2Gi"
+  podSecurityContext:
+    runAsUser: 65534
+    runAsNonRoot: true
+    runAsGroup: 65534
+    fsGroup: 65534
 
-  config:
-    global:
-      resolve_timeout: 5m
-    inhibit_rules:
-      - source_matchers:
-          - 'severity = critical'
-        target_matchers:
-          - 'severity =~ warning|info'
-        equal:
-          - 'namespace'
-          - 'alertname'
-      - source_matchers:
-          - 'severity = warning'
-        target_matchers:
-          - 'severity = info'
-        equal:
-          - 'namespace'
-          - 'alertname'
-      - source_matchers:
-          - 'alertname = InfoInhibitor'
-        target_matchers:
-          - 'severity = info'
-        equal:
-          - 'namespace'
-    route:
-      group_by: ['namespace']
-      group_wait: 30s
-      group_interval: 5m
-      repeat_interval: 12h
-      receiver: 'null'
-      routes:
-      - receiver: 'null'
-        matchers:
-          - alertname =~ "InfoInhibitor|Watchdog"
-    receivers:
-    - name: 'null'
-    templates:
-    - '/etc/alertmanager/config/*.tmpl'
-
-
-
-prometheus:
+kube-state-metrics:
   enabled: true
-  annotations: {}
-  serviceAccount:
-    create: true
-  thanosService:
-    enabled: false
-  thanosServiceMonitor:
-    enabled: false
-  thanosServiceExternal:
-    enabled: false
-    image:
-      registry: quay.io
-      repository: prometheus/prometheus
-      tag: v2.39.1
+prometheus-node-exporter:
+  enabled: true
+  rbac:
+    pspEnabled: false
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
 
-    replicas: 1
-    resources: {}
-    # requests:
-    #   memory: 400Mi
+prometheus-pushgateway:
+  enabled: true
+  serviceAnnotations:
+    prometheus.io/probe: pushgateway
 
-  thanosRulerSpec:
-    image:
-      registry: quay.io
-      repository: thanos/thanos
-      tag: v0.28.1
