@@ -5,7 +5,7 @@ controller:
   logLevel: info
   image: 
     repository: quay.io/metallb/controller
-    tag: v0.13.5
+    tag: 
     pullPolicy:
   securityContext:
     runAsNonRoot: true
