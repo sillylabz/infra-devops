@@ -7,7 +7,7 @@ helm upgrade -i metallb metallb \
     --create-namespace
 
 if [[ $? -eq 0 ]]; then
-    sleep 30s;
-    kubectl apply -f default-pool.yaml
+    sleep 60s && \
+        kubectl apply -f default-pool.yaml
 fi
 

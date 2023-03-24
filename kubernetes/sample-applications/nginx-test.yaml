@@ -17,7 +17,6 @@ spec:
   template:
     metadata:
       labels:
-        service: nginx
         app: nginx
     spec:
       containers:
@@ -29,13 +28,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  namespace: nginx
   name: nginx
+  namespace: nginx
 spec:
   selector: 
     app: nginx
-  type: NodePort  
+  type: LoadBalancer  
   ports:
     - port: 80
+      protocol: TCP
       targetPort: 80
-      nodePort: 32000

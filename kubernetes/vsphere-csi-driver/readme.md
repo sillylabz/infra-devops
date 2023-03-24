@@ -53,7 +53,7 @@ kubectl get CSINode
 
 - Create Storage Class
 ```sh
-k apply -f storage-class.yml
+kubectl apply -f storage-class.yml
 ```
 
 
