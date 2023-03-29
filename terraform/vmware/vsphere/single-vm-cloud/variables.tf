@@ -77,6 +77,11 @@ variable "vm_dns_server" {
   type = string
 }
 
+variable "vm_dns_search_domain" {
+  description = "DNS domain for the vSphere virtual machine"
+  type = string
+}
+
 variable "vm_cpu" {
   description = "Number of vCPU for the vSphere virtual machines"
   type = number

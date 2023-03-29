@@ -18,9 +18,9 @@ write_files:
                 via: ${vm_gateway}
             nameservers:
               addresses:
-                - 8.8.8.8
-                - 8.8.4.4
                 - ${vm_dns_server}
+              search:
+                - ${vm_dns_search_domain}
     path: /etc/netplan/50-cloud-init.yaml
   - content: | 
       network: {config: disabled}
