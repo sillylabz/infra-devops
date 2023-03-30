@@ -33,4 +33,3 @@ runcmd:
   - resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
 
 
-
