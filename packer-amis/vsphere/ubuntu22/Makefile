@@ -22,18 +22,3 @@ ubuntu22-clone-docker:
 		-var "ssh_password=${ssh_password}" \
 		ubuntu22-clone.pkr.hcl
 
-ubuntu22-iso-docker:
-	docker run --rm -ti --name packer-build \
-		-v ${curr_dir}:/workspace -w /workspace \
-		-e PACKER_PLUGIN_PATH=/workspace/.packer.d/plugins \
-		hashicorp/packer:latest \
-		build -force -on-error=cleanup \
-		-var-file ubuntu22-iso.pkvars.hcl \
-		-var-file vsphere-creds.pkvars.hcl \
-		-var "vcenter_password=${vcenter_password}" \
-		-var "ssh_password=${ssh_password}" \
-		ubuntu22-iso.pkr.hcl
-
-
-
-
