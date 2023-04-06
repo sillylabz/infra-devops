@@ -152,7 +152,7 @@ variable "ssh_password" {
 
 
 # packer source 
-source "vsphere-clone" "ubuntu22" {
+source "vsphere-clone" "ubuntu" {
     # vcenter creds options
     vcenter_server = var.vcenter_server
     username = var.vcenter_username
@@ -193,12 +193,12 @@ source "vsphere-clone" "ubuntu22" {
 # packer build 
 build {
   sources = [
-    "source.vsphere-clone.ubuntu22"
+    "source.vsphere-clone.ubuntu"
     ]
 
   provisioner "shell" {
     scripts = [
-        "${path.root}/scripts/ubuntu22-setup.sh"
+        "${path.root}/setup.sh"
     ]
     expect_disconnect = true
   }

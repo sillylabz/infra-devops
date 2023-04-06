@@ -2,7 +2,7 @@ terraform {
   required_providers {
     vsphere = {
       source = "hashicorp/vsphere"
-      version = ">= 2.3.0"
+      version = "~> 2.3"
     }
   }
 }
@@ -12,7 +12,6 @@ provider "vsphere" {
   user           = var.vsphere_user
   password       = var.vsphere_password
 
-  # If you have a self-signed cert
   allow_unverified_ssl = true
 }
 
