@@ -48,26 +48,6 @@ variable "vcenter_datastore" {
   default = ""
 }
 
-// variable "vcenter_network" {
-//   type    = string
-//   description = "The network segment or port group name to which the primary virtual network adapter will be connected."
-//   default = ""
-// }
-
-
-
-# ISO Objects
-variable "iso_dir" {
-  type    = string
-  description = "The directory on the source vSphere datastore for ISO images."
-  default = ""
-  }
-
-variable "iso_file" {
-  type = string
-  description = "The file name of the guest operating system ISO image installation media."
-  default = ""
-}
 
 
 variable "vm_name" {
@@ -81,18 +61,6 @@ variable "vm_template_name" {
   description = "The template vm name"
   default = ""
 }
-
-// variable "vm_guest_os_type" {
-//   type    = string
-//   description = "The guest operating system type, also know as guestid."
-//   default = ""
-// }
-
-// variable "vm_version" {
-//   type = number
-//   description = "The VM virtual hardware version."
-//   # https://kb.vmware.com/s/article/1003746
-// }
 
 variable "vm_cpu_sockets" {
   type = number
@@ -109,32 +77,10 @@ variable "vm_mem_size" {
   description = "The size for the virtual memory in MB."
 }
 
-// variable "vm_disk_size" {
-//   type = number
-//   description = "The size for the virtual disk in MB."
-// }
-
 variable "thin_provision" {
   type = bool
   description = "Thin or Thick provisioning of the disk"
 }
-
-// variable "disk_eagerly_scrub" {
-//   type = bool
-//   description = "eagrly scrub zeros"
-//   default = false
-// }
-
-// variable "vm_disk_controller_type" {
-//   type = list(string)
-//   description = "The virtual disk controller types in sequence."
-// }
-
-// variable "vm_network_card" {
-//   type = string
-//   description = "The virtual network card type."
-//   default = ""
-// }
 
 variable "ssh_username" {
   type    = string
@@ -152,7 +98,7 @@ variable "ssh_password" {
 
 
 # packer source 
-source "vsphere-clone" "ubuntu22" {
+source "vsphere-clone" "ubuntu20" {
     # vcenter creds options
     vcenter_server = var.vcenter_server
     username = var.vcenter_username
@@ -166,12 +112,9 @@ source "vsphere-clone" "ubuntu22" {
     communicator = "ssh"
     vm_name = var.vm_name
     template = var.vm_template_name
-    // guest_os_type = var.vm_guest_os_type
     tools_upgrade_policy = true
     convert_to_template = true
-    // vm_version = var.vm_version
     notes = "Built by HashiCorp Packer on ${local.timestamp}."
-    // firmware = var.vm_firmware
 
     # vm cpu options
     CPUs = var.vm_cpu_sockets
@@ -193,12 +136,12 @@ source "vsphere-clone" "ubuntu22" {
 # packer build 
 build {
   sources = [
-    "source.vsphere-clone.ubuntu22"
+    "source.vsphere-clone.ubuntu20"
     ]
 
   provisioner "shell" {
     scripts = [
-        "${path.root}/scripts/ubuntu22-setup.sh"
+        "${path.root}/setup.sh"
     ]
     expect_disconnect = true
   }

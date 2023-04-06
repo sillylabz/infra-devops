@@ -16,10 +16,10 @@ ubuntu20-clone-docker:
 		-e PACKER_PLUGIN_PATH=/workspace/.packer.d/plugins \
 		hashicorp/packer:latest \
 		build -force -on-error=cleanup \
-		-var-file ubuntu20-clone.pkvars.hcl \
-		-var-file vsphere-creds.pkvars.hcl \
+		-var-file ubuntu20.pkvars.hcl \
+		-var-file vsphere-vars.pkvars.hcl \
 		-var "vcenter_password=${vcenter_password}" \
 		-var "ssh_password=${ssh_password}" \
-		ubuntu20-clone.pkr.hcl
+		ubuntu20.pkr.hcl
 
 
