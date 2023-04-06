@@ -32,13 +32,6 @@ resource vsphere_virtual_machine "virtual_machine" {
     template_uuid = data.vsphere_virtual_machine.template.id
     timeout = 10
   }
-
-  # extra_config = {
-  #   "guestinfo.userdata"          = base64gzip(file("${path.module}/templates/userdata.yaml"))
-  #   "guestinfo.userdata.encoding" = "gzip+base64"
-  #   "guestinfo.metadata"          = base64gzip(file("${path.module}/templates/metadata.yaml"))
-  #   "guestinfo.metadata.encoding" = "gzip+base64"
-  # }
   
   extra_config = {
     "guestinfo.userdata"          = base64gzip(templatefile("${path.module}/templates/userdata.yml", {
