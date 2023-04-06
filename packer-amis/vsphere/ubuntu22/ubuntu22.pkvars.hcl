@@ -2,7 +2,7 @@
 http_directory = "http"
 
 # Virtual Machine Settings
-vm_name                     = "base-ubuntu22-templ-3"
+vm_name                     = "ubuntu22-templ-base-gold"
 vm_template_name = "base-ubuntu22-1a"
 vm_cdrom_type               = "sata"
 vm_cpu_sockets              = 1

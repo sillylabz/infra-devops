@@ -198,7 +198,7 @@ build {
 
   provisioner "shell" {
     scripts = [
-        "${path.root}/ubuntu22-setup.sh"
+        "${path.root}/setup.sh"
     ]
     expect_disconnect = true
   }
