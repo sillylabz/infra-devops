@@ -1,42 +1,10 @@
-data "vsphere_datacenter" "dc" {
-  name = var.vsphere_datacenter
-}
-
-data "vsphere_compute_cluster" "cluster" {
-  name          = var.vsphere_cluster
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
-data "vsphere_datastore" "datastore" {
-  name          = var.vm_datastore
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
-// data "vsphere_datastore_cluster" "datastore_cluster" {
-//   name          = var.vm_datastore_cluster
-//   datacenter_id = data.vsphere_datacenter.dc.id
-// }
-
-data "vsphere_network" "network" {
-  name          = var.vm_network
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
-data "vsphere_virtual_machine" "template" {
-  name          = var.vm_template
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
 
 resource "vsphere_virtual_machine" "virtual_machine" {
-  // count            = var.vm_count
   name             = var.vm_name
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
-  firmware = "bios"
   wait_for_guest_net_timeout = var.vm_customize_timeout
   wait_for_guest_ip_timeout = var.vm_customize_timeout
-  efi_secure_boot_enabled = false
 
   num_cpus = var.vm_cpu
   memory   = var.vm_memory
