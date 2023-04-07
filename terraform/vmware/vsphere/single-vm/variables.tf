@@ -24,20 +24,10 @@ variable "vm_name" {
   type = string
 }
 
-// variable "vm_count" {
-//   description = "Number of vSphere virtual machines to be created"
-//   type = number
-// }
-
 variable "vm_datastore" {
   description = "Datastore used for the vSphere virtual machines"
   type = string
 }
-
-// variable "vm_datastore_cluster" {
-//   description = "Datastore cluster used for the vSphere virtual machines"
-//   type = string
-// }
 
 variable "vm_network" {
   description = "Network used for the vSphere virtual machines"
@@ -60,13 +50,8 @@ variable "vm_linked_clone" {
   default     = false
 }
 
-variable "vm_baseip" {
-  description = "Base IP used for the vSphere virtual machines"
-  type = string
-}
-
-variable "vm_ip_suffix" {
-  description = "Ip suffix used for the vSphere virtual machines"
+variable "vm_ip" {
+  description = "Ip used for the vSphere virtual machines"
   type = string
 }
 
@@ -98,5 +83,11 @@ variable "vm_cpu" {
 variable "vm_memory" {
   description = "Amount of RAM for the vSphere virtual machines (example: 2048)"
   type = number
+}
+
+variable "vm_disk_size" {
+  description = "Disk size in GB for vm disk. Defaults to template disk size"
+  type = number
+  default = null
 }
 

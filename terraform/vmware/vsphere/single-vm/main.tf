@@ -17,7 +17,7 @@ resource "vsphere_virtual_machine" "virtual_machine" {
 
   disk {
     label            = "disk0"
-    size             = data.vsphere_virtual_machine.template.disks.0.size
+    size             = var.vm_disk_size == null ? data.vsphere_virtual_machine.template.disks.0.size : var.vm_disk_size
     eagerly_scrub    = data.vsphere_virtual_machine.template.disks.0.eagerly_scrub
     thin_provisioned = data.vsphere_virtual_machine.template.disks.0.thin_provisioned
   }
@@ -35,7 +35,7 @@ resource "vsphere_virtual_machine" "virtual_machine" {
       }
 
       network_interface {
-        ipv4_address = "${var.vm_baseip}.${var.vm_ip_suffix}"
+        ipv4_address = var.vm_ip
         ipv4_netmask = var.vm_netmask
       }
 

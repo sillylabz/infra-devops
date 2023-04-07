@@ -2,7 +2,7 @@
 http_directory = "http"
 
 # Virtual Machine Settings
-vm_name                     = "rocky9-base-templ-gold"
+vm_name                     = "rocky9-base-templ-gold-1"
 vm_template_name = "base-rocky9"
 vm_cdrom_type               = "sata"
 vm_cpu_sockets              = 1
