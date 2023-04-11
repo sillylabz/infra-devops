@@ -96,6 +96,12 @@ variable "ssh_password" {
   sensitive = true
 }
 
+variable "script_name" {
+  type    = string
+  description = "script used to customize vm over SSH."
+  default = ""
+}
+
 
 # packer source 
 source "vsphere-clone" "rocky-linux" {
@@ -141,7 +147,7 @@ build {
 
   provisioner "shell" {
     scripts = [
-        "${path.root}/setup.sh"
+        "${path.root}/${var.script_name}"
     ]
     expect_disconnect = true
   }
