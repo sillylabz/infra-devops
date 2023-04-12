@@ -2,8 +2,8 @@
 http_directory = "http"
 
 # Virtual Machine Settings
-vm_name                     = "rocky9-base-templ-gold-1"
-vm_template_name = "base-rocky9"
+vm_name                     = "centos7-base-templ-gold-1a"
+vm_template_name = "base-centos7"
 vm_cdrom_type               = "sata"
 vm_cpu_sockets              = 1
 vm_cpu_cores                = 1
@@ -13,5 +13,6 @@ disk_eagerly_scrub          = false
 vm_boot_wait                = "5s"
 ssh_username                = "devops"
 ssh_password                = ""
+script_name = ""
 
 
