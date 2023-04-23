@@ -7,4 +7,6 @@ build-latest:
 build-tag:
 	docker build -t hernanku/$(image_name):$(image_tag) .
 
-
+push-image:
+	docker push hernanku/$(image_name):latest 
+	docker push hernanku/$(image_name):$(image_tag) 
