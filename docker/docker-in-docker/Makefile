@@ -1,5 +1,5 @@
-image_name=docker-20-dind
-image_tag=docker
+image_name=dind20
+image_tag=1.0.0
 
 build-latest:
 	docker build -t hernanku/$(image_name):latest .
