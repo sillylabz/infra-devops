@@ -1,0 +1,1 @@
+{"DiskProvisioning":"thin","NetworkMapping":[{"Name":"nic0","Network":"/dc-east/network/vmPub"},{"Name":"VM Network","Network":"/dc-east/network/vmPub"}]}

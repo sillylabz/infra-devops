@@ -14,7 +14,7 @@ spec:
   controlPlaneConfiguration:
     count: 3
     endpoint:
-      host: "10.0.0.254"
+      host: "10.23.1.253"
     machineGroupRef:
       kind: VSphereMachineConfig
       name: sample-eksa1-cp
@@ -26,10 +26,9 @@ spec:
     machineGroupRef:
       kind: VSphereMachineConfig
       name: sample-eksa1-etcd
-  kubernetesVersion: "1.21"
+  kubernetesVersion: "1.25"
   workerNodeGroupConfigurations:
   - count: 9
-
     machineGroupRef:
       kind: VSphereMachineConfig
       name: sample-eksa1
@@ -43,7 +42,7 @@ spec:
   datacenter: "dc-east"
   insecure: true
   network: "vmPub"
-  server: "10.0.0.31"
+  server: "10.23.1.11"
   thumbprint: ""
 
 ---
@@ -52,15 +51,15 @@ kind: VSphereMachineConfig
 metadata:
   name: sample-eksa1-cp
 spec:
-  datastore: "WorkloadDatastore (2)"
+  datastore: "vmData"
   diskGiB: 25
-  # folder: "/SDDC-Datacenter/vm/Linux-Lab"
+  folder: "eksa"
   memoryMiB: 8192
   numCPUs: 2
-  osFamily: ubuntu
-  # resourcePool: "Compute-ResourcePool-3"
+  osFamily: bottlerocket
+  resourcePool: "eksa"
   users:
-  - name: capv
+  - name: ec2-user
     sshAuthorizedKeys:
     - ""
 
@@ -72,13 +71,13 @@ metadata:
 spec:
   datastore: "vmData"
   diskGiB: 25
-  # folder: "/SDDC-Datacenter/vm/Linux-Lab"
+  folder: "eksa"
   memoryMiB: 8192
   numCPUs: 2
-  osFamily: ubuntu
-  # resourcePool: "Compute-ResourcePool-3"
+  osFamily: bottlerocket
+  resourcePool: "eksa"
   users:
-  - name: capv
+  - name: ec2-user
     sshAuthorizedKeys:
     - ""
 
@@ -90,19 +89,14 @@ metadata:
 spec:
   datastore: "vmData"
   diskGiB: 25
-  # folder: "/SDDC-Datacenter/vm/Linux-Lab"
+  folder: "eksa"
   memoryMiB: 8192
   numCPUs: 2
-  osFamily: ubuntu
-  # resourcePool: "Compute-ResourcePool-3"
+  osFamily: bottlerocket
+  resourcePool: "eksa"
   users:
-  - name: capv
+  - name: ec2-user
     sshAuthorizedKeys:
     - ""
 ---
-arn:aws:iam::202334955716:role/AWSReservedSSO_Guest_Exp_DevOps_449f6a554cd8830c
-- groups:
-      - system:masters
-      rolearn: arn:aws:iam::202334955716:role/AWSReservedSSO_Guest_Exp_DevOps_449f6a554cd8830c
-      username: slalom-admin:{{SessionName}}
 
