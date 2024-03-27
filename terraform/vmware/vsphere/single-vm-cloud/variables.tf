@@ -24,6 +24,11 @@ variable "vm_name" {
   type = string
 }
 
+variable "vm_nic_name" {
+  description = "The name of the network card for network configs. ex ens160 for Ubuntu22"
+  type = string
+}
+
 variable "vm_datastore" {
   description = "Datastore used for the vSphere virtual machines"
   type = string
