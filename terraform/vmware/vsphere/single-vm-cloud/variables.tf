@@ -65,10 +65,10 @@ variable "vm_gateway" {
   type = string
 }
 
-# variable "vm_ip_suffix" {
-#   description = "Ip suffix used for the vSphere virtual machines"
-#   type = string
-# }
+variable "vm_os_family" {
+  description = "OS family, to determine how cloudinit is applied for configurations"
+  type = string
+}
 
 variable "vm_disk_size" {
   description = "Disk size in GB for vm disk. Defaults to template disk size"

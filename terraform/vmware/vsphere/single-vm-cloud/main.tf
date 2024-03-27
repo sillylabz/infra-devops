@@ -34,10 +34,15 @@ resource vsphere_virtual_machine "virtual_machine" {
   }
   
   extra_config = {
-    "guestinfo.userdata"          = base64encode(templatefile("${path.module}/templates/userdata.yml", {
-    }))
+    "guestinfo.userdata"          = var.vm_os_family == "Fedora" ? base64encode(templatefile("${path.module}/templates/fedora-userdata.yml", {
+      hostname = var.vm_name,
+      vm_nic_name = var.vm_nic_name,
+      vm_ip = var.vm_ipv4_address,
+      vm_gateway = var.vm_gateway,
+      vm_dns_server = var.vm_dns_server
+    })) : base64encode(templatefile("${path.module}/templates/debian-userdata.yml", {}))
     "guestinfo.userdata.encoding" = "base64"
-    "guestinfo.metadata"          = base64encode(templatefile("${path.module}/templates/metadata.yml", {
+    "guestinfo.metadata"          = var.vm_os_family == "Fedora" ? base64encode(templatefile("${path.module}/templates/fedora-metadata.yml", {})) : base64encode(templatefile("${path.module}/templates/debian-metadata.yml", {
       hostname = var.vm_name,
       vm_nic_name = var.vm_nic_name,
       vm_ip = var.vm_ipv4_address,
@@ -49,7 +54,6 @@ resource vsphere_virtual_machine "virtual_machine" {
     }))
     "guestinfo.metadata.encoding" = "base64"
   }
-
-
-
 }
+
+
