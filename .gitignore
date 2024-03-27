@@ -26,3 +26,6 @@
 **/.bash_history
 **/*.env
 
+
+!**/shared_vars.tfvars
+
