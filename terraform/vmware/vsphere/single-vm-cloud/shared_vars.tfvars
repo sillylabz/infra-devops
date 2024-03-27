@@ -1,6 +1,6 @@
 vsphere_server_url = "10.97.23.11"
 vsphere_user       = "administrator@vsphere.local"
-vsphere_password   = ""
+vsphere_password   = "PrankWe66#"
 vsphere_datacenter = "dc-east"
 vsphere_cluster    = "lab-cluster"
 vm_datastore = "vmData"

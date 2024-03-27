@@ -34,24 +34,9 @@ resource vsphere_virtual_machine "virtual_machine" {
   }
   
   extra_config = {
-    "guestinfo.userdata"          = var.vm_os_family == "Fedora" ? base64encode(templatefile("${path.module}/templates/fedora-userdata.yml", {
-      hostname = var.vm_name,
-      vm_nic_name = var.vm_nic_name,
-      vm_ip = var.vm_ipv4_address,
-      vm_gateway = var.vm_gateway,
-      vm_dns_server = var.vm_dns_server
-    })) : base64encode(templatefile("${path.module}/templates/debian-userdata.yml", {}))
+    "guestinfo.userdata"          = var.vm_os_family == "Fedora" ? local.fedora_userdata : base64encode(templatefile("${path.module}/templates/debian-userdata.yml", {}))
     "guestinfo.userdata.encoding" = "base64"
-    "guestinfo.metadata"          = var.vm_os_family == "Fedora" ? base64encode(templatefile("${path.module}/templates/fedora-metadata.yml", {})) : base64encode(templatefile("${path.module}/templates/debian-metadata.yml", {
-      hostname = var.vm_name,
-      vm_nic_name = var.vm_nic_name,
-      vm_ip = var.vm_ipv4_address,
-      vm_gateway = var.vm_gateway,
-      vm_dns_server = var.vm_dns_server,
-      vm_dns_search_domain = var.vm_dns_search_domain,
-      vm_disk_extend_size = var.vm_disk_size != null ? tonumber(var.vm_disk_size - tonumber(data.vsphere_virtual_machine.template.disks.0.size)) : tonumber(var.vm_disk_size - tonumber(data.vsphere_virtual_machine.template.disks.0.size))
-      
-    }))
+    "guestinfo.metadata"          = var.vm_os_family == "Fedora" ? base64encode(templatefile("${path.module}/templates/fedora-metadata.yml", {})) : local.debian_metadata
     "guestinfo.metadata.encoding" = "base64"
   }
 }
