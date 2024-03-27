@@ -14,7 +14,9 @@ write_files:
 
 runcmd:
   - hostnamectl set-hostname ${hostname}
-  - lvextend -l +100%FREE /dev/rl/root
+  - sudo growpart /dev/sda 2
+  - sudo pvresize /dev/sda2
+  - sudo lvextend -r -l +100%FREE /dev/mapper/rl-root
 ssh_pwauth: True
 power_state:
   mode: reboot
