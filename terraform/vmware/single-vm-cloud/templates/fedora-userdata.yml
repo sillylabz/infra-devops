@@ -1,4 +1,7 @@
 #cloud-config
+packages: 
+  - cloud-utils-growpart
+
 write_files:
   - content: |
         DEVICE=${vm_nic_name}
