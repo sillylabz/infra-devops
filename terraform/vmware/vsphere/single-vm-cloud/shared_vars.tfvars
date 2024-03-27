@@ -15,4 +15,5 @@ vm_template    = "gold-templ-ubuntu22-cloudinit"
 vm_cpu         = 4
 vm_memory      = 16384
 vm_dns_server = "10.23.1.9"
+vm_nic_name = "ens160"
 

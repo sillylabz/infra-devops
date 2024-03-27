@@ -6,7 +6,7 @@ network:
   ethernets:
     nics:
       match:
-        name: ens160
+        name: ${vm_nic_name}
       dhcp4: false
       addresses:
         - ${vm_ip}/24

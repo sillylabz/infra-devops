@@ -39,6 +39,7 @@ resource vsphere_virtual_machine "virtual_machine" {
     "guestinfo.userdata.encoding" = "base64"
     "guestinfo.metadata"          = base64encode(templatefile("${path.module}/templates/metadata.yml", {
       hostname = var.vm_name,
+      nic_name = var.vm_nic_name,
       vm_ip = var.vm_ipv4_address,
       vm_gateway = var.vm_gateway,
       vm_dns_server = var.vm_dns_server,
