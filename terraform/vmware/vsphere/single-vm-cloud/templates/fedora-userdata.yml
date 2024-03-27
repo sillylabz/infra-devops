@@ -1,0 +1,22 @@
+#cloud-config
+write_files:
+  - content: |
+        DEVICE=${vm_nic_name}
+        ONBOOT=yes
+        BOOTPROTO=none
+        IPADDR=${vm_ip}
+        PREFIX=24
+        NETMASK=255.255.255.0
+        GATEWAY=${vm_gateway}
+        DNS1=${vm_dns_server}
+    path: /etc/sysconfig/network-scripts/ifcfg-${vm_nic_name}
+    permissions: 0644
+
+runcmd:
+  - hostnamectl set-hostname ${hostname}
+  - lvextend -l +100%FREE /dev/rl/root
+ssh_pwauth: True
+power_state:
+  mode: reboot
+  timeout: 30
+  condition: True
