@@ -1,20 +1,16 @@
-nameOverride: argocd
-kubeVersionOverride: "1.23.13"
-createAggregateRoles: false
+createAggregateRoles: true
 crds:
   install: true
   keep: false
 
 global:
-  image:
-    repository: quay.io/argoproj/argocd
-    tag: ""
-    imagePullPolicy: IfNotPresent
+  domain: argocd.labz.io
 
 configs:
   cm:
     create: true
   params:
+    create: true
     annotations: {}
     server.insecure: true
   rbac:
@@ -172,7 +168,7 @@ server:
   service:
     annotations: {}
     labels: {}
-    type: ClusterIP
+    type: LoadBalancer
     nodePortHttp: 30080
     nodePortHttps: 30443
     servicePortHttp: 80
@@ -192,29 +188,6 @@ server:
     create: true
     name: argocd-server
     automountServiceAccountToken: true
-  ingress:
-    enabled: false
-    annotations: {}
-    labels: {}
-    ingressClassName: ""
-    hosts: []
-    paths:
-      - /
-    pathType: Prefix
-    extraPaths: []
-      # - path: /*
-      #   pathType: Prefix
-      #   backend:
-      #     service:
-      #       name: ssl-redirect
-      #       port:
-      #         name: use-annotation
-
-    tls: []
-      # - secretName: your-certificate-name
-      #   hosts:
-      #     - argocd.example.com
-    https: false
   extensions:
     enabled: false
     image:

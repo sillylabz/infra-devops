@@ -32,6 +32,7 @@ metadata:
   name: game-2048
   namespace: game-2048
 spec:
+  type: ClusterIP
   ports:
     - port: 80
       targetPort: 80

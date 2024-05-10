@@ -1,9 +1,9 @@
 #!/bin/bash
 
-helm upgrade -i nginx-ingress-controller nginx-ingress \
-    --repo https://helm.nginx.com/stable \
+helm upgrade -i ingress-nginx-controller ingress-nginx \
+    --repo https://kubernetes.github.io/ingress-nginx \
     -f helm-values.yaml \
-    --namespace nginx-ingress-controller \
+    --namespace ingress-nginx-controller \
     --create-namespace 
 
 

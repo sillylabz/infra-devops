@@ -1,6 +1,6 @@
 #!/bin/bash
 
-helm -n nginx-ingress-controller \
-    uninstall nginx-ingress-controller && \
-    kubectl delete ns nginx-ingress-controller
+helm -n ingress-nginx-controller \
+    uninstall ingress-nginx-controller && \
+    kubectl delete ns ingress-nginx-controller
 

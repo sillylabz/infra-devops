@@ -1,4 +1,4 @@
-argo-deploy:
+deploy-argo:
 	helm upgrade -i argocd argo-cd \
 		--namespace argocd \
 		--create-namespace \
@@ -6,7 +6,7 @@ argo-deploy:
 		--set crds.install=true \
 		-f helm-values.yml
 
-argo-delete:
+delete-argo:
 	helm -n argocd uninstall argocd && \
 		kubectl delete ns argocd
 

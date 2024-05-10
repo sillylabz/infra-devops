@@ -1,18 +1,27 @@
-controller:
-  name: nginx-ingress
-  kind: deployment
-  nginxplus: false
-  image:
-    repository: nginx/nginx-ingress
-    tag: "2.3.1"
-    pullPolicy: IfNotPresent
-  resources: 
-    limits:
-      cpu: 100m
-      memory: 64Mi
-    requests:
-      cpu: 100m
-      memory: 64Mi
-  replicaCount: 1
+fullnameOverride: ingress-nginx
 
+controller:
+  name: controller
+  enableAnnotationValidations: false
+  image:
+    chroot: false
+    registry: registry.k8s.io
+    image: ingress-nginx/controller
+    tag: "v1.10.0"
+    containerName: ingress-nginx-controller
+    pullPolicy: IfNotPresent
+    runAsNonRoot: true
+    runAsUser: 101
+    allowPrivilegeEscalation: false
+    seccompProfile:
+      type: RuntimeDefault
+    readOnlyRootFilesystem: false
+    service:
+      enabled: true
+      external:
+        enabled: true
+      annotations: {}
+      type: NodePort
+  extraArgs:
+    enable-ssl-passthrough: true
 

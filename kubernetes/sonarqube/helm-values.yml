@@ -1,0 +1,112 @@
+deploymentType: "StatefulSet"
+replicaCount: 1
+revisionHistoryLimit: 10
+
+deploymentStrategy: {}
+edition: "community"
+
+image:
+  repository: sonarqube
+  tag: 10.5.0-{{ .Values.edition }}
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  externalPort: 9000
+  internalPort: 9000
+  labels:
+  annotations: {}
+sonarWebContext: ""
+
+ingress-nginx:
+  enabled: false
+ingress:
+  enabled: false
+  hosts:
+    - name: sonarqube.labz.io
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "64m"
+  tls: []
+
+resources:
+  limits:
+    cpu: 800m
+    memory: 6144M
+    ephemeral-storage: 512000M
+  requests:
+    cpu: 400m
+    memory: 2048M
+    ephemeral-storage: 1536M
+
+persistence:
+  enabled: true
+  storageClass: vsphere-csi-sc
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  uid: 1000
+  guid: 0
+emptyDir: {}
+jdbcOverwrite:
+  enable: false
+  jdbcUrl: "jdbc:postgresql://sonarDB?socketTimeout=1500"
+  jdbcUsername: "sonarUser"
+  jdbcPassword: "sonarPass"
+postgresql:
+  enabled: true
+  postgresqlUsername: "sonarUser"
+  postgresqlPassword: "sonarPass"
+  postgresqlDatabase: "sonarDB"
+  service:
+    port: 5432
+  resources:
+    limits:
+      cpu: 2
+      memory: 2Gi
+    requests:
+      cpu: 100m
+      memory: 200Mi
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 20Gi
+    storageClass: vsphere-csi-sc
+  securityContext:
+    enabled: true
+    fsGroup: 1001
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1001
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+    capabilities:
+      drop: ["ALL"]
+  volumePermissions:
+    enabled: false
+    securityContext:
+      runAsUser: 0
+  shmVolume:
+    chmod:
+      enabled: false
+  serviceAccount:
+    enabled: false
+podLabels: {}
+sonarqubeFolder: /opt/sonarqube
+
+tests:
+  image: ""
+  enabled: true
+  resources:
+    limits:
+      cpu: 500m
+      memory: 200M
+serviceAccount:
+  create: false
+  annotations: {}
+
+extraConfig:
+  secrets: []
+  configmaps: []
+
+terminationGracePeriodSeconds: 60
+
