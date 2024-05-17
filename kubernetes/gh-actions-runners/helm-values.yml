@@ -1,0 +1,130 @@
+labels: {}
+
+replicaCount: 1
+
+webhookPort: 9443
+syncPeriod: 1m
+defaultScaleDownDelay: 10m
+
+enableLeaderElection: true
+authSecret:
+  enabled: true
+  create: false
+  name: "controller-manager"
+  annotations: {}
+  #github_token: ""
+
+dockerRegistryMirror: ""
+image:
+  repository: "summerwind/actions-runner-controller"
+  actionsRunnerRepositoryAndTag: "summerwind/actions-runner:latest"
+  dindSidecarRepositoryAndTag: "docker:dind"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+runner:
+  statusUpdateHook:
+    enabled: false
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+service:
+  type: ClusterIP
+  port: 443
+  annotations: {}
+
+metrics:
+  serviceAnnotations: {}
+  serviceMonitor:
+    enable: false
+    namespace: ""
+    timeout: 30s
+    interval: 1m
+  serviceMonitorLabels: {}
+  port: 8443
+  proxy:
+    enabled: true
+    image:
+      repository: quay.io/brancz/kube-rbac-proxy
+      tag: v0.13.1
+
+scope:
+  singleNamespace: false
+  watchNamespace: ""
+
+certManagerEnabled: false
+logFormat: text
+
+
+githubWebhookServer:
+  enabled: false
+  replicaCount: 1
+  useRunnerGroupsVisibility: false
+  logFormat: text
+  secret:
+    enabled: false
+    create: false
+    name: "github-webhook-server"
+    github_webhook_secret_token: ""
+    #github_token: ""
+  imagePullSecrets: []
+  nameOverride: ""
+  fullnameOverride: ""
+  serviceAccount:
+    create: true
+    annotations: {}
+    name: ""
+  priorityClassName: ""
+  service:
+    type: ClusterIP
+    annotations: {}
+    ports:
+      - port: 80
+        targetPort: http
+        protocol: TCP
+        name: http
+  terminationGracePeriodSeconds: 10
+  lifecycle: {}
+
+actionsMetrics:
+  serviceMonitor:
+    enable: false
+    namespace: ""
+    timeout: 30s
+    interval: 1m
+  serviceMonitorLabels: {}
+  port: 8443
+  proxy:
+    enabled: true
+    image:
+      repository: quay.io/brancz/kube-rbac-proxy
+      tag: v0.13.1
+
+actionsMetricsServer:
+  enabled: false
+  replicaCount: 1
+  ## specify log format for actions metrics server.  Valid options are "text" and "json"
+  logFormat: text
+  secret:
+    enabled: false
+    create: false
+    name: "actions-metrics-server"
+    github_webhook_secret_token: ""
+    #github_token: ""
+  service:
+    type: ClusterIP
+    annotations: {}
+    ports:
+      - port: 80
+        targetPort: http
+        protocol: TCP
+        name: http
+    tls: []
+  terminationGracePeriodSeconds: 10
+  lifecycle: {}
