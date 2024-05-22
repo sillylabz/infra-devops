@@ -1,0 +1,17 @@
+# create-vm-folder.yml
+- name: Create a VM folder on given datacenter
+  vcenter_folder:
+    hostname: "{{ lookup('env', 'VCENTER_HOSTNAME') }}"
+    username: "{{ lookup('env', 'VCENTER_USERNAME') }}"
+    password: "{{ lookup('env', 'VCENTER_PASSWORD') }}"
+    datacenter_name: "{{ datacenter_name }}"
+    folder_name: "{{ item }}"
+    folder_type: vm
+    state: absent
+    validate_certs: "{{ lookup('env', 'VCENTER_CERT_VALIDATE') }}"
+  register: vm_folder_creation_result
+  delegate_to: localhost
+  with_items:
+    - "{{ vm_folder_names }}"
+
+
