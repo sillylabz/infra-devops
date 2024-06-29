@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-DEVOPS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-docker run --rm -it -v ~/.aws:/root/.aws -v ~/.kube:/root/.kube -v ${PWD}:/root devops-cli:latest "$@"
-
