@@ -1,3 +1,17 @@
+terraform {
+  required_version = ">= 1.1.9"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 4.30.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~>2.14.0"
+    }
+  }
+}
+
 provider "aws" {
   region = var.aws_region
   # access_key = var.aws_access_key
@@ -11,14 +25,13 @@ locals {
   tags = {
     Environment = var.environment
     Project     = var.project_name
-    Owner       = var.owner
   }
 }
 
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "3.7.0"
+  version = "5.13.0"
 
   name = local.name
   cidr = var.vpc_cidr
@@ -44,6 +57,7 @@ module "vpc" {
     var.subnet_cidrs["public2"],
     var.subnet_cidrs["public3"]
   ]
+  map_public_ip_on_launch = true
   public_subnet_tags = merge(
     local.tags,
     {

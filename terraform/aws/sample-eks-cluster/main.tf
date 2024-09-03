@@ -35,7 +35,7 @@ module "eks" {
   cluster_name    = local.cluster_name
   cluster_version = var.cluster_version
   vpc_id          = data.aws_vpc.vpc.id
-  subnet_ids      = data.aws_subnets.public.ids
+  subnet_ids      = tolist(data.aws_subnets.public.ids)
   aws_auth_users  = local.system_masters_users
 
   manage_aws_auth_configmap = true
@@ -63,13 +63,9 @@ module "eks" {
   enable_kms_key_rotation         = true
 
   cluster_addons = {
-    coredns = {
-      resolve_conflicts = "OVERWRITE"
-    }
+    coredns = {}
     kube-proxy = {}
-    vpc-cni = {
-      resolve_conflicts = "OVERWRITE"
-    }
+    vpc-cni = {}
   }
 
   # EKS Managed Node Group(s)

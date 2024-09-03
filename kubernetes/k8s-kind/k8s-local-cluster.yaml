@@ -4,7 +4,7 @@ apiVersion: kind.x-k8s.io/v1alpha4
 name: k8s-kind-cluster-local
 nodes: 
 - role: control-plane
-  image: kindest/node:v1.23.1@sha256:69860bda5563ac81e3c0057d654b5253219618a22ec3a346306239bba8cfa1a6
+  image: kindest/node:v1.27.13@sha256:17439fa5b32290e3ead39ead1250dca1d822d94a10d26f1981756cd51b24b9d8
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
@@ -20,7 +20,7 @@ nodes:
     hostPort: 443
     protocol: TCP
 - role: worker
-  image: kindest/node:v1.23.1@sha256:69860bda5563ac81e3c0057d654b5253219618a22ec3a346306239bba8cfa1a6
+  image: kindest/node:v1.27.13@sha256:17439fa5b32290e3ead39ead1250dca1d822d94a10d26f1981756cd51b24b9d8
   kubeadmConfigPatches:
     - |
       kind: InitConfiguration
@@ -28,7 +28,7 @@ nodes:
         kubeletExtraArgs:
           node-labels: "ingress-ready=true"
 - role: worker
-  image: kindest/node:v1.23.1@sha256:69860bda5563ac81e3c0057d654b5253219618a22ec3a346306239bba8cfa1a6
+  image: kindest/node:v1.27.13@sha256:17439fa5b32290e3ead39ead1250dca1d822d94a10d26f1981756cd51b24b9d8
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
@@ -36,11 +36,26 @@ nodes:
       kubeletExtraArgs:
         node-labels: "ingress-ready=true"
 - role: worker
-  image: kindest/node:v1.23.1@sha256:69860bda5563ac81e3c0057d654b5253219618a22ec3a346306239bba8cfa1a6
+  image: kindest/node:v1.27.13@sha256:17439fa5b32290e3ead39ead1250dca1d822d94a10d26f1981756cd51b24b9d8
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
     nodeRegistration:
       kubeletExtraArgs:
         node-labels: "ingress-ready=true"
-
+- role: worker
+  image: kindest/node:v1.27.13@sha256:17439fa5b32290e3ead39ead1250dca1d822d94a10d26f1981756cd51b24b9d8
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"
+- role: worker
+  image: kindest/node:v1.27.13@sha256:17439fa5b32290e3ead39ead1250dca1d822d94a10d26f1981756cd51b24b9d8
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"

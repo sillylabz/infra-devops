@@ -13,6 +13,8 @@ controller:
     fsGroup: 65534
 
 speaker:
+  enabled: false
+  logLevel: info
   image:
     repository: quay.io/metallb/speaker
     tag:

@@ -13,7 +13,7 @@ spec:
   selector:
     matchLabels:
       app: game-2048
-  replicas: 5
+  replicas: 3
   template:
     metadata:
       labels:
@@ -32,29 +32,31 @@ metadata:
   name: game-2048
   namespace: game-2048
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   ports:
     - port: 80
       targetPort: 80
       protocol: TCP
   selector:
     app: game-2048
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  namespace: game-2048
-  name: game-2048
-spec:
-  ingressClassName: "nginx"
-  rules:
-    - host: game-2048.labz.io
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: game-2048
-                port:
-                  number: 80
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   namespace: game-2048
+#   name: game-2048
+#   annotations:
+#     alb.ingress.kubernetes.io/scheme: internet-facing
+#     alb.ingress.kubernetes.io/target-type: ip
+# spec:
+#   ingressClassName: alb
+#   rules:
+#     - http:
+#         paths:
+#         - path: /
+#           pathType: Prefix
+#           backend:
+#             service:
+#               name: game-2048
+#               port:
+#                 number: 80

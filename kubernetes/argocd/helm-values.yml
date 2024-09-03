@@ -4,7 +4,7 @@ crds:
   keep: false
 
 global:
-  domain: argocd.labz.io
+  domain: argocd.sndbx.labz.io
 
 configs:
   cm:

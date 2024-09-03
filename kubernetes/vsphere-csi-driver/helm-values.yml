@@ -1,0 +1,572 @@
+## @section Global parameters
+
+global:
+  mode: full
+  imageRegistry:
+  storageClass:
+  logLevel: DEVELOPMENT
+  config:
+    existingSecret:
+    csidriver:
+      enabled: true
+    storageclass:
+      enabled: false
+      name: "vsphere-csi"
+      storagepolicyname: ""
+      expansion: false 
+      default: false
+      reclaimPolicy: Delete
+    netconfig: {}
+    # global vcenter parameters
+    global:
+      port: 443
+      insecure-flag: true
+      # settings for using k8s secret
+      secretName: vsphere-cloud-secret
+      secretNamespace: kube-system
+      cluster-id: your-unique-cluster-id
+    # settins for vcenter without secret
+    vcenter: 
+      # your-vcenter-name-here:
+        server: 10.0.0.1
+        user: use-your-vcenter-user-here
+        password: use-your-vcenter-password-here
+        datacenters:
+          - hrwest
+          - hreast
+
+
+## @section Common parameters
+kubeVersion:
+fullnameOverride:
+commonLabels: {}
+commonAnnotations: {}
+clusterDomain: cluster.local
+extraDeploy: []
+
+
+service:
+  type: ClusterIP
+  port: 80
+  httpsPort: 443
+  externalTrafficPolicy: Cluster
+  annotations: {}
+
+## @section controller Parameters
+controller:
+  name: vsphere-csi-controller
+  config:
+    trigger-csi-fullsync: false
+    pv-to-backingdiskobjectid-mapping: false
+  image:
+    registry: gcr.io
+    repository: cloud-provider-vsphere/csi/release/driver
+    tag: v3.3.0
+    pullPolicy: IfNotPresent
+
+  resizer:
+    image:
+      registry: registry.k8s.io
+      repository: sig-storage/csi-resizer
+      tag: v1.10.1
+      pullPolicy: IfNotPresent
+
+    containerSecurityContext:
+      enabled: false
+      runAsUser: 1001
+    args:
+      - "--v=4"
+      - "--timeout=300s"
+      - "--handle-volume-inuse-error=false"
+      - "--csi-address=$(ADDRESS)"
+      - "--kube-api-qps=100"
+      - "--kube-api-burst=100"
+      - "--leader-election"
+      - "--leader-election-lease-duration=30s"
+      - "--leader-election-renew-deadline=20s"
+      - "--leader-election-retry-period=10s"
+    resources:
+      limits: {}
+      requests: {}
+    livenessProbe:
+      enabled: false
+      # httpGet:
+      #   path: /
+      initialDelaySeconds: foo
+      periodSeconds: bar
+      timeoutSeconds: foo
+      failureThreshold: bar
+      successThreshold: foo
+    readinessProbe:
+      enabled: false
+      # httpGet:
+      #   path: /
+      initialDelaySeconds: foo
+      periodSeconds: bar
+      timeoutSeconds: foo
+      failureThreshold: bar
+      successThreshold: foo
+
+  attacher:
+    image:
+      registry: registry.k8s.io
+      repository: sig-storage/csi-attacher
+      tag: v4.5.1
+      pullPolicy: IfNotPresent
+    containerSecurityContext:
+      enabled: false
+      runAsUser: 1001
+    args:
+      - "--v=4"
+      - "--timeout=300s"
+      - "--csi-address=$(ADDRESS)"
+      - "--leader-election"
+      - "--leader-election-lease-duration=120s"
+      - "--leader-election-renew-deadline=60s"
+      - "--leader-election-retry-period=30s"
+      - "--kube-api-qps=100"
+      - "--kube-api-burst=100"
+    resources:
+      limits: {}
+      requests: {}
+    livenessProbe:
+      enabled: false
+      # httpGet:
+        # path: /
+      initialDelaySeconds: foo
+      periodSeconds: bar
+      timeoutSeconds: foo
+      failureThreshold: bar
+      successThreshold: foo
+    readinessProbe:
+      enabled: false
+      # httpGet:
+      #   path: /
+      initialDelaySeconds: foo
+      periodSeconds: bar
+      timeoutSeconds: foo
+      failureThreshold: bar
+      successThreshold: foo
+
+  livenessprobe:
+    image:
+      registry: registry.k8s.io
+      repository: sig-storage/livenessprobe
+      tag: v2.12.0
+      pullPolicy: IfNotPresent
+    containerSecurityContext:
+      enabled: false
+      runAsUser: 1001
+    args:
+      - "--v=4"
+      - "--csi-address=/csi/csi.sock"
+
+    resources:
+      limits: {}
+      requests: {}
+    livenessProbe:
+      enabled: false
+      # httpGet:
+      #   path: /
+      initialDelaySeconds: foo
+      periodSeconds: bar
+      timeoutSeconds: foo
+      failureThreshold: bar
+      successThreshold: foo
+    readinessProbe:
+      enabled: false
+      # httpGet:
+      #   path: /
+      initialDelaySeconds: foo
+      periodSeconds: bar
+      timeoutSeconds: foo
+      failureThreshold: bar
+      successThreshold: foo
+    customLivenessProbe: {}
+    customReadinessProbe: {}
+    extraVolumeMounts: []
+
+  syncer:
+    image:
+      registry: gcr.io
+      repository: cloud-provider-vsphere/csi/release/syncer
+      tag: v3.3.0
+      pullPolicy: IfNotPresent
+    containerSecurityContext:
+      enabled: true
+      runAsNonRoot: true
+      runAsUser: 65532
+      runAsGroup: 65532
+    args:
+      - "--leader-election"
+      - "--leader-election-lease-duration=30s"
+      - "--leader-election-renew-deadline=20s"
+      - "--leader-election-retry-period=10s"
+      - "--fss-name=internal-feature-states.csi.vsphere.vmware.com"
+      - "--fss-namespace=$(CSI_NAMESPACE)"
+
+    resources:
+      limits: {}
+      requests: {}
+
+  provisioner:
+    image:
+      registry: registry.k8s.io
+      repository: sig-storage/csi-provisioner
+      tag: v4.0.1
+      pullPolicy: IfNotPresent
+    containerSecurityContext:
+      enabled: false
+      runAsUser: 1001
+    args:
+      - "--v=4"
+      - "--timeout=300s"
+      - "--csi-address=$(ADDRESS)"
+      - "--kube-api-qps=100"
+      - "--kube-api-burst=100"
+      - "--leader-election"
+      - "--leader-election-lease-duration=120s"
+      - "--leader-election-renew-deadline=60s"
+      - "--leader-election-retry-period=30s"
+      - "--default-fstype=ext4"
+    resources:
+      limits: {}
+      requests: {}
+
+
+  snapshotter:
+    image:
+      registry: registry.k8s.io
+      repository: sig-storage/csi-snapshotter
+      tag: v7.0.2
+      pullPolicy: IfNotPresent
+    args:
+      - "--v=4"
+      - "--kube-api-qps=100"
+      - "--kube-api-burst=100"
+      - "--timeout=300s"
+      - "--csi-address=$(ADDRESS)"
+      - "--leader-election"
+      - "--leader-election-lease-duration=120s"
+      - "--leader-election-renew-deadline=60s"
+      - "--leader-election-retry-period=30s"
+    resources:
+      limits: {}
+      requests: {}
+
+  replicaCount: 3
+  livenessProbe:
+    enabled: true
+    httpGet:
+      path: /healthz
+      port: healthz
+    initialDelaySeconds: 25
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+  resources:
+    limits: {}
+    requests: {}
+  containerSecurityContext:
+    enabled: true
+    runAsNonRoot: true
+    runAsUser: 65532
+    runAsGroup: 65532
+  args:
+    - "--fss-name=internal-feature-states.csi.vsphere.vmware.com"
+    - "--fss-namespace=$(CSI_NAMESPACE)"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+        - matchExpressions:
+          - key: node-role.kubernetes.io/controlplane
+            operator: Exists
+        - matchExpressions:
+          - key: node-role.kubernetes.io/master
+            operator: Exists
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+  updateStrategy:
+    type: RollingUpdate
+  priorityClassName: system-cluster-critical
+
+
+## Configuration for the csi snapshotwebhook deployment
+
+snapshotwebhook:
+  name: vsphere-csi-snapshotwebhook
+  image:
+    registry: registry.k8s.io
+    repository: sig-storage/snapshot-validation-webhook
+    tag: v7.0.2
+    pullPolicy: IfNotPresent
+  replicaCount: 3
+  dnsPolicy: "Default"
+  resources:
+    limits: {}
+    requests: {}
+  args: ['--tls-cert-file=/run/secrets/tls/tls.crt', '--tls-private-key-file=/run/secrets/tls/tls.key']
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+  updateStrategy:
+    type: RollingUpdate
+  priorityClassName: system-node-critical
+
+  serviceAccount:
+    create: true
+
+
+## Configuration for the node daemonset
+node:
+  name: vsphere-csi-node
+  image:
+    registry: gcr.io
+    repository: cloud-provider-vsphere/csi/release/driver
+    tag: v3.3.0
+    pullPolicy: IfNotPresent
+
+  registrar:
+    image:
+      registry: registry.k8s.io
+      repository: sig-storage/csi-node-driver-registrar
+      tag: v2.10.1
+      pullPolicy: IfNotPresent
+    args:
+      - "--v=5"
+      - "--csi-address=$(ADDRESS)"
+      - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
+    resources:
+      limits: {}
+      requests: {}
+    livenessProbe:
+      enabled: true
+      exec:
+        command:
+        - /csi-node-driver-registrar
+        - --kubelet-registration-path=/var/lib/kubelet/plugins/csi.vsphere.vmware.com/csi.sock
+        - --mode=kubelet-registration-probe
+      initialDelaySeconds: 3
+
+  livenessprobe:
+    image:
+      registry: registry.k8s.io
+      repository: sig-storage/livenessprobe
+      tag: v2.12.0
+      pullPolicy: IfNotPresent
+    args:
+      - "--v=4"
+      - "--csi-address=/csi/csi.sock"
+    resources:
+      limits: {}
+      requests: {}
+  livenessProbe:
+    enabled: true
+    httpGet:
+      path: /healthz
+      port: healthz
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+  resources:
+    limits: {}
+    requests: {}
+  hostNetwork: true
+  dnsPolicy: "ClusterFirstWithHostNet"
+  containerSecurityContext:
+    enabled: true
+    privileged: true
+    capabilities:
+      add: ["SYS_ADMIN"]
+    allowPrivilegeEscalation: true
+  args:
+    - "--fss-name=internal-feature-states.csi.vsphere.vmware.com"
+    - "--fss-namespace=$(CSI_NAMESPACE)"
+  tolerations:
+    - effect: NoExecute
+      operator: Exists
+    - effect: NoSchedule
+      operator: Exists
+  updateStrategy:
+    type: RollingUpdate
+  priorityClassName: system-node-critical
+
+  serviceAccount:
+    create: true
+
+
+## Configuration for the windows node daemonset
+winnode:
+  name: vsphere-csi-node-windows
+  image:
+    registry: gcr.io
+    repository: cloud-provider-vsphere/csi/release/driver
+    tag: v3.3.0
+    pullPolicy: IfNotPresent
+  registrar:
+    image:
+      registry: registry.k8s.io
+      repository: sig-storage/csi-node-driver-registrar
+      tag: v2.10.1
+      pullPolicy: IfNotPresent
+    args:
+      - "--v=5"
+      - "--csi-address=$(ADDRESS)"
+      - "--kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)"
+    resources:
+      limits: {}
+      requests: {}
+    livenessProbe:
+      enabled: true
+      exec:
+        command:
+        - /csi-node-driver-registrar
+        - --kubelet-registration-path=/var/lib/kubelet/plugins/csi.vsphere.vmware.com/csi.sock
+        - --mode=kubelet-registration-probe
+      initialDelaySeconds: 3
+
+    readinessProbe:
+      enabled: false
+      # httpGet:
+      #   path: /
+      initialDelaySeconds: foo
+      periodSeconds: bar
+      timeoutSeconds: foo
+      failureThreshold: bar
+      successThreshold: foo
+
+  livenessprobe:
+    image:
+      registry: registry.k8s.io
+      repository: sig-storage/livenessprobe
+      tag: v2.12.0
+      pullPolicy: IfNotPresent
+    args:
+      - "--v=4"
+      - "--csi-address=/csi/csi.sock"
+    resources:
+      limits: {}
+      requests: {}
+  livenessProbe:
+    enabled: true
+    httpGet:
+      path: /healthz
+      port: healthz
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 3
+  resources:
+    limits: {}
+    requests: {}
+  hostNetwork: true
+
+  podSecurityContext:
+    enabled: false
+    fsGroup: 1001
+  containerSecurityContext:
+    enabled: true
+    privileged: true
+    capabilities:
+      add: ["SYS_ADMIN"]
+    allowPrivilegeEscalation: true
+  args:
+    - "--fss-name=internal-feature-states.csi.vsphere.vmware.com"
+    - "--fss-namespace=$(CSI_NAMESPACE)"
+
+  tolerations:
+    - effect: NoExecute
+      operator: Exists
+    - effect: NoSchedule
+      operator: Exists
+  updateStrategy:
+    type: RollingUpdate
+  priorityClassName: system-node-critical
+  serviceAccount:
+    create: true
+
+
+linuxnode:
+  kubelet:
+    linuxPath: /var/lib/kubelet
+
+
+## Configuration for the webhook deployment
+webhook:
+  enabled: false
+  image:
+    registry: gcr.io
+    repository: cloud-provider-vsphere/csi/release/syncer
+    tag: v3.3.0
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    limits: {}
+    requests: {}
+
+  args:
+    - "--operation-mode=WEBHOOK_SERVER"
+    - "--fss-name=internal-feature-states.csi.vsphere.vmware.com"
+    - "--fss-namespace=$(CSI_NAMESPACE)"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+        - matchExpressions:
+          - key: node-role.kubernetes.io/controlplane
+            operator: Exists
+        - matchExpressions:
+          - key: node-role.kubernetes.io/master
+            operator: Exists
+  tolerations:
+    - key: node-role.kubernetes.io/control-plane
+      operator: Exists
+      effect: NoSchedule
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+  updateStrategy:
+    type: RollingUpdate
+  
+  serviceAccount:
+    create: true
+
+    
+
+## RBAC configuration
+##
+rbac:
+  ## @param rbac.create Specifies whether RBAC resources should be created
+  ##
+  create: true
+
+
+## @section Subchart parameters
+## vsphere-cpi subcharz config
+## @param vsphere-cpi.enabled Specifies whether CPI subchart resources should be deployed
+
+vsphere-cpi:
+  enabled: false
+
+snapshot:
+  controller:
+    enabled: false
+  validationWebhook:
+    enabled: false
