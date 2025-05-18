@@ -1,0 +1,4 @@
+all:
+  hosts:
+    dev_dns:
+      ansible_host: 10.83.0.28

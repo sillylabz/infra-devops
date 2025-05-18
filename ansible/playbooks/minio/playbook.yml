@@ -1,0 +1,53 @@
+---
+- name: Install and configure minio
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure Python3 and pip are installed
+      apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-docker
+        state: present
+        update_cache: yes
+
+    - name: Ensure MinIO data directory exists
+      file:
+        path: /opt/minio/data
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Ensure Docker Compose file is present
+      copy:
+        src: docker-compose.yml
+        dest: /opt/minio/docker-compose.yml
+        owner: root
+        group: root
+        mode: '0644'
+
+
+    - name: Start MinIO service using Docker Compose
+      community.docker.docker_compose_v2:
+        project_src: /opt/minio
+        state: present
+
+    - name: Restart MinIO service if needed
+      community.docker.docker_compose_v2:
+        project_src: /opt/minio
+        state: restarted
+      when: minio_restart_needed | default(false)
+
+    - name: Stop MinIO service
+      community.docker.docker_compose_v2:
+        project_src: /opt/minio
+        state: stopped
+      when: minio_stop_needed | default(false)
+
+    - name: Remove MinIO service
+      community.docker.docker_compose_v2:
+        project_src: /opt/minio
+        state: absent
+      when: minio_remove_needed | default(false)

@@ -6,7 +6,7 @@ helm upgrade -i --wait metallb metallb \
     -n metallb \
     --create-namespace
 
-if [[ $? -eq 0 ]]; then
+if [ $? -eq 0 ]; then
     sleep 5s && kubectl apply -f default-pool.yaml
 fi
 

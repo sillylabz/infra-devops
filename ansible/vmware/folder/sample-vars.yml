@@ -1,8 +1,0 @@
-# sample-vars.yml
-datacenter_name: dc-east
-vm_folder_names: 
-  - test-vm-folder-1
-  - test-vm-folder-2
-  - test-vm-folder-3
-  - test-vm-folder-4
-  - test-vm-folder-5

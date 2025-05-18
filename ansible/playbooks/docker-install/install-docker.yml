@@ -1,0 +1,37 @@
+---
+- name: Install and configure Docker on Ubuntu
+  hosts: all
+  become: yes
+  vars:
+    docker_users:
+      - "{{ ansible_user }}"
+    docker_package_state: present
+    docker_install_compose: true
+
+  pre_tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+      changed_when: false
+
+  roles:
+    - role: geerlingguy.docker
+      tags: docker
+
+  tasks:
+    - name: Ensure Docker is running and enabled
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Verify Docker installation
+      ansible.builtin.command:
+        cmd: docker --version
+      register: docker_version_output
+
+    - name: Display Docker version
+      ansible.builtin.debug:
+        var: docker_version_output.stdout
+

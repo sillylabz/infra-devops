@@ -1,0 +1,4 @@
+all:
+  hosts:
+    core_dns:
+      ansible_host: 10.89.65.22

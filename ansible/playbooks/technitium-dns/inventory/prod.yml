@@ -1,0 +1,4 @@
+all:
+  hosts:
+    prod_dns:
+      ansible_host: 10.22.0.28

@@ -1,0 +1,20 @@
+services:
+  dns-server:
+    image: technitium/dns-server:latest
+    container_name: dns-server
+    hostname: dns-server
+    ports:
+      - "5380:5380/tcp"
+      - "53:53/udp"
+      - "53:53/tcp"
+    environment:
+      - DNS_SERVER_DOMAIN=dns-prod.prod.sillylabz.tekether.com
+      - DNS_SERVER_ADMIN_PASSWORD=changeme
+      - DNS_SERVER_OPTIONAL_PROTOCOL_DNS_OVER_HTTP=true
+    networks:
+      - dns-net
+
+networks:
+  dns-net:
+    driver: bridge
+    

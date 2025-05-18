@@ -1,0 +1,53 @@
+---
+- name: Install and configure nginx-proxy-manager
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure Python3 and pip are installed
+      apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-docker
+        state: present
+        update_cache: yes
+
+    - name: Ensure nginx proxy manager data directory exists
+      file:
+        path: /opt/nginx-proxy-manager/data
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Ensure Docker Compose file is present
+      copy:
+        src: docker-compose.yml
+        dest: /opt/nginx-proxy-manager/docker-compose.yml
+        owner: root
+        group: root
+        mode: '0644'
+
+
+    - name: Start nginx proxy manager service using Docker Compose
+      community.docker.docker_compose_v2:
+        project_src: /opt/nginx-proxy-manager
+        state: present
+
+    - name: Restart nginx proxy manager service
+      community.docker.docker_compose_v2:
+        project_src: /opt/nginx-proxy-manager
+        state: restarted
+      when: nginx_proxy_manager_restart_needed | default(false)
+
+    - name: Stop nginx proxy manager service
+      community.docker.docker_compose_v2:
+        project_src: /opt/nginx-proxy-manager
+        state: stopped
+      when: nginx_proxy_manager_stop_needed | default(false)
+
+    - name: Remove nginx proxy manager service
+      community.docker.docker_compose_v2:
+        project_src: /opt/nginx-proxy-manager
+        state: absent
+      when: nginx_proxy_manager_remove_needed | default(false)

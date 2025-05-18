@@ -1,0 +1,4 @@
+all:
+  hosts:
+    gp_tools:
+      ansible_host: 10.89.65.23

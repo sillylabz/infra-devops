@@ -1,0 +1,84 @@
+---
+- name: Install and configure pihole dns
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure Python3 and pip are installed
+      apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-docker
+        state: present
+        update_cache: yes
+
+    - name: Stop and disable systemd-resolved
+      systemd:
+        name: systemd-resolved
+        state: stopped
+        enabled: no
+      register: systemd_resolved_stopped
+
+    - name: Update resolv.conf to use public DNS
+      copy:
+        dest: /etc/resolv.conf
+        content: |
+          nameserver 8.8.8.8
+          nameserver 1.1.1.1
+        owner: root
+        group: root
+        mode: '0644'
+      when: systemd_resolved_stopped.changed
+
+    - name: Make resolv.conf immutable
+      command: chattr +i /etc/resolv.conf
+      when: systemd_resolved_stopped.changed
+
+    - name: Ensure pihole dns data directory exists
+      file:
+        path: /opt/pihole
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Ensure pihole etc directory exists
+      file:
+        path: /etc/pihole
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Ensure Docker Compose file is present
+      copy:
+        src: docker-compose.yml
+        dest: /opt/pihole/docker-compose.yml
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Start pihole dns service using Docker Compose
+      community.docker.docker_compose_v2:
+        project_src: /opt/pihole
+        state: present
+
+
+    - name: Restart pihole service if needed
+      community.docker.docker_compose_v2:
+        project_src: /opt/pihole
+        state: restarted
+      when: pihole_restart_needed | default(false)
+
+    - name: Stop pihole service
+      community.docker.docker_compose_v2:
+        project_src: /opt/pihole
+        state: stopped
+      when: pihole_stop_needed | default(false)
+
+    - name: Remove pihole service
+      community.docker.docker_compose_v2:
+        project_src: /opt/pihole
+        state: absent
+      when: pihole_remove_needed | default(false)
+

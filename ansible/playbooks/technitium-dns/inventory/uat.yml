@@ -1,0 +1,4 @@
+all:
+  hosts:
+    uat_dns:
+      ansible_host: 10.72.0.28

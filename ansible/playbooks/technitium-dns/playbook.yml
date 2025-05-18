@@ -1,0 +1,76 @@
+---
+- name: Install and configure technitium dns
+  hosts: all
+  become: yes
+  tasks:
+    - name: Ensure Python3 and pip are installed
+      apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-docker
+        state: present
+        update_cache: yes
+
+    - name: Stop and disable systemd-resolved
+      systemd:
+        name: systemd-resolved
+        state: stopped
+        enabled: no
+      register: systemd_resolved_stopped
+
+    - name: Update resolv.conf to use public DNS
+      copy:
+        dest: /etc/resolv.conf
+        content: |
+          nameserver 8.8.8.8
+          nameserver 1.1.1.1
+        owner: root
+        group: root
+        mode: '0644'
+      when: systemd_resolved_stopped.changed
+
+    - name: Make resolv.conf immutable
+      command: chattr +i /etc/resolv.conf
+      when: systemd_resolved_stopped.changed
+
+    - name: Ensure technitium dns data directory exists
+      file:
+        path: /opt/technitium/data
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Ensure Docker Compose file is present
+      copy:
+        src: docker-compose.yml
+        dest: /opt/technitium/docker-compose.yml
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Start technitium dns service using Docker Compose
+      community.docker.docker_compose_v2:
+        project_src: /opt/technitium
+        state: present
+
+
+    - name: Restart technitium service if needed
+      community.docker.docker_compose_v2:
+        project_src: /opt/technitium
+        state: restarted
+      when: technitium_restart_needed | default(false)
+
+    - name: Stop technitium service
+      community.docker.docker_compose_v2:
+        project_src: /opt/technitium
+        state: stopped
+      when: technitium_stop_needed | default(false)
+
+    - name: Remove technitium service
+      community.docker.docker_compose_v2:
+        project_src: /opt/technitium
+        state: absent
+      when: technitium_remove_needed | default(false)
+
