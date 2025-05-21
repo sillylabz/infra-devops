@@ -1,5 +1,5 @@
 all:
   hosts:
     docker_host:
-      ansible_host: 10.22.0.28
+      ansible_host: 10.89.65.39
 

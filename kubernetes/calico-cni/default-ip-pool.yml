@@ -1,0 +1,13 @@
+apiVersion: projectcalico.org/v3
+kind: IPPool
+metadata:
+ name: loadbalancer-ip-pool
+spec:
+ cidr: 10.202.0.0/20
+ blockSize: 24
+ natOutgoing: true
+ disabled: false
+ assignmentMode: Automatic
+ allowedUses:
+  - LoadBalancer
+  
